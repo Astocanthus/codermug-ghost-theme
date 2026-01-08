@@ -33,6 +33,7 @@
   align-items: center;
   gap: 0.25rem;
   flex-shrink: 0;
+  min-width: 160px;
 }
 
 .site-logo:hover {
@@ -49,6 +50,7 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  min-width: 320px;
 }
 
 .site-slogan {
@@ -56,6 +58,15 @@
   color: var(--color-text-muted);
   margin-top: 2px;
   font-style: italic;
+  min-height: 1.2em;
+  line-height: 1.2;
+  white-space: nowrap;
+  width: 320px;
+}
+
+.site-slogan:empty::before {
+  content: '\00a0';
+  visibility: hidden;
 }
 
 .site-slogan .slogan-title {
@@ -93,6 +104,7 @@
 .nav-link {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   color: var(--color-text-muted);
   font-size: 0.95rem;
@@ -101,7 +113,13 @@
   border-radius: var(--border-radius-sm);
   transition: all var(--transition-fast);
   white-space: nowrap;
+  min-width: 100px;
 }
+
+.nav-item:nth-child(1) .nav-link { min-width: 95px; }   /* Accueil */
+.nav-item:nth-child(2) .nav-link { min-width: 120px; }  /* Boîte à outils */
+.nav-item:nth-child(3) .nav-link { min-width: 90px; }   /* Séries */
+.nav-item:nth-child(4) .nav-link { min-width: 95px; }   /* À propos */
 
 .nav-link:hover,
 .nav-link.active {
@@ -224,6 +242,8 @@
   font-weight: 500;
   border-radius: var(--border-radius-sm);
   transition: all var(--transition-fast);
+  min-width: 60px;
+  text-align: center;
 }
 
 .btn-ghost:hover {
@@ -241,6 +261,8 @@
   cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: var(--glow-orange);
+  min-width: 100px;
+  text-align: center;
 }
 
 .btn-primary:hover {

@@ -16,6 +16,10 @@ body.page-template-page-about .site-footer {
     display: none;
 }
 
+body.page-template-page-about .circuit-background {
+    display: none;
+}
+
 /* ==========================================================================
    BACKGROUND GRID & GLOW
    ========================================================================== */

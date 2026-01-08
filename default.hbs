@@ -13,6 +13,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
     rel="stylesheet">
@@ -47,7 +48,7 @@
       <nav class="site-nav">
         <ul class="nav-list">
           <li class="nav-item">
-            <a href="{{@site.url}}" class="nav-link {{#is " home"}}active{{/is}}">Accueil</a>
+            <a href="{{@site.url}}" class="nav-link {{#is "home"}}active{{/is}}">Accueil</a>
           </li>
           <li class="nav-item">
             <a href="{{@site.url}}/toolbox/" class="nav-link">Boîte à outils</a>
@@ -145,7 +146,7 @@
         </div>
       </li>
       <li class="mobile-nav-item">
-        <a href="{{@site.url}}/about/" class="mobile-nav-link">À propos</a>
+        <a href="{{@site.url}}/about/" class="mobile-nav-link {{#is "page" slug="about"}}active{{/is}}">À propos</a>
       </li>
     </ul>
     <div class="mobile-nav-actions">
