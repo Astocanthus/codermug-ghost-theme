@@ -30,8 +30,8 @@ body {
   background-repeat: no-repeat;
 
   /* Masque */
-  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 80%);
-  mask-image: linear-gradient(to bottom, black 30%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 65%);
+  mask-image: linear-gradient(to bottom, black 50%, transparent 65%);
 
   will-change: opacity;
   pointer-events: none;

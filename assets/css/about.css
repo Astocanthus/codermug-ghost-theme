@@ -183,7 +183,7 @@ body.page-template-page-about .site-footer {
 .about-hero-photo img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center top;
     filter: grayscale(100%) contrast(1.1);
     mask-image: linear-gradient(
@@ -696,6 +696,18 @@ body.page-template-page-about .site-footer {
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
+
+@media (max-width: 1650px) {
+  .about-hero-photo img {
+    object-fit: cover;
+  }
+}
+
+@media (min-width: 1650px) {
+  .about-hero-content {
+    margin-left: 17vw;
+  }
+}
 
 @media (max-width: 1024px) {
     .about-terminal-layout {
