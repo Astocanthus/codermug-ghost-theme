@@ -209,6 +209,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-- Inspired by Tron Legacy aesthetics
 - Built for the [Ghost](https://ghost.org/) publishing platform
-- Icons from various emoji sets
