@@ -12,7 +12,6 @@ body.page-template-page-about .site-content {
     height: 100vh;
 }
 
-body.page-template-page-about .site-header,
 body.page-template-page-about .site-footer {
     display: none;
 }
