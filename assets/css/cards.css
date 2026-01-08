@@ -1,0 +1,500 @@
+/* ==========================================================================
+   CONFIGURATION SCROLL (Fluide & Naturel)
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* 1. FOND CIRCUIT */
+.circuit-background {
+  z-index: -10 !important;
+  background-color: #0a0a0f;
+}
+
+#fixed-hero-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -5;
+
+  background-image: url('../images/hero-bg.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+
+  /* Masque */
+  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 80%);
+  mask-image: linear-gradient(to bottom, black 30%, transparent 80%);
+
+  will-change: opacity;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   HERO BANNER (Espaceur Invisible)
+   ========================================================================== */
+
+.home-content {
+  padding: 0;
+  background: transparent !important;
+}
+
+.hero-banner {
+  position: relative;
+  height: 40vh;
+  min-height: 350px;
+  width: 100%;
+
+  background: transparent !important;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-banner-content {
+  position: fixed;
+
+  top: 15vh;
+
+  left: 0;
+  right: 0;
+
+  height: 25vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  z-index: 2;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+
+  pointer-events: none;
+}
+
+.hero-banner-label {
+  display: block;
+  font-family: var(--font-tech);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #ffffff;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px var(--color-orange-glow);
+}
+
+.hero-banner-content h1 {
+  font-family: var(--font-tech);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 var(--spacing-md) 0;
+  color: #fff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px var(--color-orange),
+    0 0 40px var(--color-orange),
+    0 0 80px var(--color-neon-orange-glow-strong);
+}
+
+.hero-banner-content p {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  max-width: 480px;
+  margin: 0;
+  line-height: 1.6;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hero-banner-overlay {
+  display: none;
+}
+
+/* ==========================================================================
+   SECTION ARTICLES (Les cartes qui passent par-dessus)
+   ========================================================================== */
+
+.articles-section {
+  position: relative;
+  z-index: 10;
+  background: transparent !important;
+
+  min-height: 100vh;
+  padding-top: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+/* ==========================================================================
+   Mobile
+   ========================================================================== */
+@media (max-width: 768px) {
+  .hero-banner {
+    height: auto !important;
+    min-height: auto !important;
+    display: block;
+    padding-top: 0;
+  }
+
+  .hero-banner-content {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    height: auto;
+    padding-top: 40px;
+    padding-bottom: 30px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    background: radial-gradient(closest-side, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+
+    pointer-events: auto;
+  }
+
+  .hero-banner-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 5px;
+  }
+
+  .hero-banner-content h1 {
+    font-size: 2.2rem;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .hero-banner-content p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    max-width: 90%;
+    padding: 0;
+  }
+
+  #fixed-hero-bg {
+    -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 80%);
+    mask-image: linear-gradient(to bottom, black 30%, transparent 80%);
+  }
+
+  .articles-section {
+    min-height: auto;
+    padding-top: 0;
+    margin-top: 0;
+    scroll-margin-top: 20px;
+  }
+}
+
+/* ==========================================================================
+   Styles Cartes (Inchangés)
+   ========================================================================== */
+
+.article-card {
+  position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: transform var(--transition-base);
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.article-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.article-card:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.article-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.article-card:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+.article-card:nth-child(5) {
+  animation-delay: 0.3s;
+}
+
+.article-card:nth-child(6) {
+  animation-delay: 0.35s;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-inner {
+  position: relative;
+  z-index: 1;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.article-card:hover .card-inner {
+  background: var(--color-bg-card-hover);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--glow-orange);
+}
+
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.article-card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(10, 10, 15, 0.8) 100%);
+  pointer-events: none;
+}
+
+.card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-elevated));
+}
+
+.card-image-placeholder svg {
+  width: 48px;
+  height: 48px;
+  stroke: var(--color-orange);
+  opacity: 0.5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  padding-bottom: 0;
+}
+
+.card-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-orange);
+  background: var(--color-orange-subtle);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+}
+
+.card-icon {
+  font-size: xx-large;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg));
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-base);
+}
+
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--color-orange);
+  transition: all var(--transition-base);
+}
+
+.article-card:hover .card-icon {
+  border-color: var(--color-orange);
+  box-shadow: var(--glow-orange);
+}
+
+.article-card:hover .card-icon svg {
+  filter: drop-shadow(0 0 8px var(--color-orange-glow));
+}
+
+.card-content {
+  flex: 1;
+  padding: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.card-title a {
+  color: var(--color-text);
+  transition: color var(--transition-fast);
+}
+
+.card-title a:hover {
+  color: var(--color-orange);
+}
+
+.card-excerpt {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+  margin: 0 var(--spacing-md) var(--spacing-md);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.card-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.card-date svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--color-orange);
+  opacity: 0.7;
+}
+
+.card-reading-time {
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.card-link {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-orange-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  transition: all var(--transition-base);
+}
+
+.card-link svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--color-orange);
+  transition: transform var(--transition-base);
+}
+
+.card-link:hover {
+  background: var(--color-orange);
+  border-color: var(--color-orange);
+  box-shadow: var(--glow-orange);
+}
+
+.card-link:hover svg {
+  stroke: var(--color-bg);
+  transform: translateX(3px);
+}
+
+.card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, var(--color-orange-glow) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.article-card:hover .card-glow {
+  opacity: 0.3;
+}
+
+.pagination {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg) 0;
+}
+
+.pagination .container,
+.pagination>div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--color-orange);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-base);
+}
+
+.pagination-btn:hover {
+  background: var(--color-orange-subtle);
+  border-color: var(--color-orange);
+}
+
+.pagination-info {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}

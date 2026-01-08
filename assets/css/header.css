@@ -1,0 +1,411 @@
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
+
+.site-header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+}
+
+/* Logo */
+.site-logo {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.site-logo:hover {
+  color: var(--color-orange);
+}
+
+.logo-bracket {
+  color: var(--color-orange);
+  text-shadow: var(--glow-orange);
+}
+
+/* Site Branding with Slogan */
+.site-branding {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.site-slogan {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.site-slogan .slogan-title {
+  color: var(--color-orange);
+  font-weight: 500;
+}
+
+.site-slogan .slogan-subtitle {
+  color: var(--color-text-dim);
+}
+
+/* ==========================================================================
+   Navigation principale - Menu horizontal
+   ========================================================================== */
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-orange);
+  background: var(--color-orange-subtle);
+}
+
+.nav-link svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-fast);
+}
+
+/* ==========================================================================
+   Dropdown Menu - Séries
+   ========================================================================== */
+
+.nav-item.has-dropdown:hover .nav-link svg {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  min-width: 500px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.nav-item.has-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-dim);
+  margin-bottom: var(--spacing-sm);
+  padding: 0 var(--spacing-xs);
+}
+
+.dropdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+/* Cards dans le dropdown */
+.dropdown-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.dropdown-card:hover {
+  background: var(--color-bg-card-hover);
+  border-color: var(--color-border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-orange);
+}
+
+.dropdown-card-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-orange-subtle);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.25rem;
+}
+
+.dropdown-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.dropdown-card-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Header Actions (Login / Subscribe)
+   ========================================================================== */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.btn-ghost {
+  color: var(--color-text-muted);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.btn-ghost:hover {
+  color: var(--color-orange);
+}
+
+.btn-primary {
+  background: var(--color-orange);
+  color: var(--color-bg);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--glow-orange);
+}
+
+.btn-primary:hover {
+  background: var(--color-orange-light);
+  color: var(--color-bg);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-orange-strong);
+}
+
+/* ==========================================================================
+   Mobile Menu Button
+   ========================================================================== */
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  padding: 0;
+  gap: 5px;
+  transition: all var(--transition-fast);
+}
+
+.mobile-menu-btn:hover {
+  border-color: var(--color-orange);
+}
+
+.mobile-menu-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-orange);
+  transition: all var(--transition-base);
+}
+
+.mobile-menu-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ==========================================================================
+   Mobile Navigation
+   ========================================================================== */
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 73px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 15, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 999;
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+}
+
+.mobile-nav.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.mobile-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.mobile-nav-link:hover {
+  color: var(--color-orange);
+}
+
+.mobile-dropdown {
+  display: none;
+  padding: var(--spacing-sm) 0;
+}
+
+.mobile-dropdown.active {
+  display: block;
+}
+
+.mobile-dropdown-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+
+.mobile-dropdown-card:last-child {
+  margin-bottom: 0;
+}
+
+.mobile-dropdown-card:hover {
+  border-color: var(--color-orange);
+  background: var(--color-bg-card-hover);
+}
+
+.mobile-dropdown-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-orange-subtle);
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+}
+
+.mobile-dropdown-text {
+  flex: 1;
+}
+
+.mobile-dropdown-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.mobile-dropdown-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.mobile-nav-actions {
+  margin-top: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.mobile-nav-actions .btn-primary {
+  text-align: center;
+  padding: var(--spacing-md);
+}

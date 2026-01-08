@@ -1,0 +1,132 @@
+{{!< default}} <div class="author-page">
+  <header class="author-header">
+    <div class="container">
+      {{#if profile_image}}
+      <img src="{{profile_image}}" alt="{{name}}" class="author-profile-image">
+      {{else}}
+      <div class="author-profile-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </div>
+      {{/if}}
+
+      <h1 class="author-name-title">{{name}}</h1>
+
+      {{#if bio}}
+      <p class="author-bio">{{bio}}</p>
+      {{/if}}
+
+      <div class="author-meta">
+        {{#if location}}
+        <span class="author-location">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {{location}}
+        </span>
+        {{/if}}
+
+        {{#if website}}
+        <a href="{{website}}" class="author-website" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          Site web
+        </a>
+        {{/if}}
+
+        {{#if twitter}}
+        <a href="https://twitter.com/{{twitter}}" class="author-twitter" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+          Twitter
+        </a>
+        {{/if}}
+      </div>
+
+      <span class="author-post-count">
+        {{plural ../pagination.total empty="Aucun article" singular="% article" plural="% articles"}}
+      </span>
+    </div>
+  </header>
+
+  <section class="articles-section">
+    <div class="container">
+      <div class="articles-grid">
+        {{#foreach posts}}
+        <article class="article-card">
+          <div class="card-inner">
+            <div class="card-image">
+              {{#if feature_image}}
+              <img src="{{feature_image}}" alt="{{title}}" loading="lazy">
+              <div class="card-image-overlay"></div>
+              {{else}}
+              <div class="card-image-placeholder" data-tag="{{primary_tag.slug}}">
+                <span class="placeholder-icon"></span>
+              </div>
+              {{/if}}
+            </div>
+            <div class="card-header">
+              <span class="card-tag">
+                {{#if primary_tag}}{{primary_tag.name}}{{else}}ARTICLE{{/if}}
+              </span>
+              <div class="card-icon" data-tag="{{primary_tag.slug}}">
+                <span class="tag-icon"></span>
+              </div>
+            </div>
+            <div class="card-content">
+              <h2 class="card-title">
+                <a href="{{url}}">{{title}}</a>
+              </h2>
+              <p class="card-excerpt">{{excerpt words="20"}}</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-meta">
+                <span class="card-date">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  {{date format="D MMM YYYY"}}
+                </span>
+                <span class="card-reading-time">· {{reading_time}}</span>
+              </div>
+              <a href="{{url}}" class="card-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="card-glow"></div>
+        </article>
+        {{/foreach}}
+      </div>
+    </div>
+  </section>
+
+  {{#if pagination.pages}}
+  {{#if pagination.total}}
+  <nav class="pagination">
+    <div class="container">
+      {{#if pagination.prev}}
+      <a href="{{pagination.prev}}" class="pagination-btn prev">← Précédent</a>
+      {{/if}}
+      <span class="pagination-info">Page {{pagination.page}} sur {{pagination.pages}}</span>
+      {{#if pagination.next}}
+      <a href="{{pagination.next}}" class="pagination-btn next">Suivant →</a>
+      {{/if}}
+    </div>
+  </nav>
+  {{/if}}
+  {{/if}}
+  </div>

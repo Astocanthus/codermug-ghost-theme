@@ -1,0 +1,185 @@
+{{!< default}} <div class="home-content">
+
+  <!-- Hero Banner with Background Image -->
+  <section class="hero-banner">
+    <div class="hero-banner-overlay"></div>
+    <div class="hero-banner-content">
+      <span class="hero-banner-label">BIENVENUE SUR</span>
+      <h1>Codermug</h1>
+      <p>{{@site.description}}</p>
+    </div>
+  </section>
+
+  <!-- Articles Grid -->
+  <section class="articles-section">
+    <div class="container">
+      <div class="articles-grid">
+        {{#foreach posts}}
+        <article class="article-card">
+          <div class="card-inner">
+            <!-- Card Image -->
+            <div class="card-image">
+              {{#if feature_image}}
+              <img src="{{feature_image}}" alt="{{title}}" loading="lazy">
+              <div class="card-image-overlay"></div>
+              {{else}}
+              <div class="card-image-placeholder" data-tag="{{primary_tag.slug}}">
+                <span class="placeholder-icon"></span>
+              </div>
+              {{/if}}
+            </div>
+
+            <!-- Card Header -->
+            <div class="card-header">
+              <span class="card-tag">
+                {{#if primary_tag}}
+                {{primary_tag.name}}
+                {{else}}
+                ARTICLE
+                {{/if}}
+              </span>
+              <div class="card-icon" data-tag="{{primary_tag.slug}}">
+                <span class="tag-icon"></span>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <div class="card-content">
+              <h2 class="card-title">
+                <a href="{{url}}">{{title}}</a>
+              </h2>
+              <p class="card-excerpt">{{excerpt words="20"}}</p>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="card-footer">
+              <div class="card-meta">
+                <span class="card-date">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  {{date format="D MMM YYYY"}}
+                </span>
+                <span class="card-reading-time">
+                  · {{reading_time}}
+                </span>
+              </div>
+              <a href="{{url}}" class="card-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="card-glow"></div>
+        </article>
+        {{/foreach}}
+      </div>
+    </div>
+  </section>
+
+  <!-- Pagination -->
+  {{#if pagination.pages}}
+  {{#if pagination.total}}
+  <nav class="pagination">
+    <div class="container">
+      {{#if pagination.prev}}
+      <a href="{{pagination.prev}}" class="pagination-btn prev">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Précédent
+      </a>
+      {{/if}}
+
+      <span class="pagination-info">Page {{pagination.page}} sur {{pagination.pages}}</span>
+
+      {{#if pagination.next}}
+      <a href="{{pagination.next}}" class="pagination-btn next">
+        Suivant
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
+      {{/if}}
+    </div>
+  </nav>
+  {{/if}}
+  {{/if}}
+
+  </div>
+
+  <script>
+    // Tag icons mapping
+    document.addEventListener('DOMContentLoaded', function () {
+      const tagIcons = {
+        'k8s-deep-dive': '☸️',
+        'itil': '📋',
+        'note-de-version': '📝',
+        'notes-de-version': '📝',
+        'default': '💻'
+      };
+
+      // Apply icons to card-icon elements
+      document.querySelectorAll('.card-icon[data-tag]').forEach(function (el) {
+        const tag = el.getAttribute('data-tag');
+        const icon = tagIcons[tag] || tagIcons['default'];
+        const iconEl = el.querySelector('.tag-icon');
+        if (iconEl) {
+          iconEl.textContent = icon;
+        }
+      });
+
+      // Apply icons to placeholder elements
+      document.querySelectorAll('.card-image-placeholder[data-tag]').forEach(function (el) {
+        const tag = el.getAttribute('data-tag');
+        const icon = tagIcons[tag] || tagIcons['default'];
+        const iconEl = el.querySelector('.placeholder-icon');
+        if (iconEl) {
+          iconEl.textContent = icon;
+        }
+      });
+    });
+
+    // Back to top on reload
+    if (history.scrollRestoration) {
+      history.scrollRestoration = 'manual';
+    } else {
+      window.onbeforeunload = function () {
+        window.scrollTo(0, 0);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      let bgContainer = document.getElementById('fixed-hero-bg');
+      if (!bgContainer) {
+        bgContainer = document.createElement('div');
+        bgContainer.id = 'fixed-hero-bg';
+        document.body.prepend(bgContainer);
+      }
+
+      const heroContent = document.querySelector('.hero-banner-content');
+
+      function handleScroll() {
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+
+        let opacity = 1 - (scrollY / (windowHeight * 0.3));
+
+        if (opacity < 0) opacity = 0;
+
+        bgContainer.style.opacity = opacity;
+
+        if (heroContent) {
+          heroContent.style.opacity = opacity;
+          heroContent.style.pointerEvents = opacity < 0.1 ? 'none' : 'auto';
+        }
+      }
+
+      window.addEventListener('scroll', () => window.requestAnimationFrame(handleScroll));
+      handleScroll();
+    });
+  </script>

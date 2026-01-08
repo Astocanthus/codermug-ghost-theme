@@ -1,0 +1,375 @@
+{{!< default}}
+
+{{!-- Navigation dots --}}
+<nav class="about-nav-dots">
+    <div class="about-nav-dot active" data-nav="0" data-label="Intro"></div>
+    <div class="about-nav-dot" data-nav="1" data-label="Parcours"></div>
+    <div class="about-nav-dot" data-nav="2" data-label="Cloud Native"></div>
+    <div class="about-nav-dot" data-nav="3" data-label="Cloud & Infra"></div>
+    <div class="about-nav-dot" data-nav="4" data-label="Apps & Data"></div>
+    <div class="about-nav-dot" data-nav="5" data-label="Practices"></div>
+    <div class="about-nav-dot" data-nav="6" data-label="Contact"></div>
+</nav>
+
+{{!-- Sections wrapper --}}
+<div class="about-wrapper">
+    <div class="about-glow"></div>
+    <div class="about-track">
+
+        {{!-- SECTION 0: HERO --}}
+        <section class="about-section about-hero" data-section="0">
+            <div class="about-hero-photo">
+                {{#if @site.logo}}
+                    <img src="{{@site.logo}}" alt="{{@site.title}}">
+                {{else}}
+                    <img src="/assets/images/portrait.png" alt="Portrait">
+                {{/if}}
+            </div>
+            
+            <div class="about-hero-content">
+                <div class="about-hero-label">BENJAMIN ROMEO</div>
+                <h1 class="about-hero-name">Dompter le Chaos</strong></h1>
+                <p class="about-hero-title">
+                    > Ingénieur Plateforme SRE & Architecte Infrastructure
+                    <span class="about-cursor"></span>
+                </p>
+                <p>
+                  STATUS: ONLINE [🟢] | UPTIME: 99.9999% | REGION: EU-WEST
+                </p>
+                <p class="about-hero-intro">
+                    Spécialiste des environnements où l'échec n'est pas une option. 
+                    Je bâtis des plateformes <strong>résilientes</strong> pour systèmes <strong>exigeants</strong>, en alliant rigueur systémique et automatisation.
+                </p>
+            </div>
+
+            <div class="about-scroll-indicator">
+                <span>SCROLL</span>
+                <div class="about-scroll-line"></div>
+            </div>
+        </section>
+
+        {{!-- SECTION 1: TERMINAL --}}
+        <section class="about-section about-terminal-section" data-section="1" data-substeps="5">
+            <div class="about-terminal-layout">
+                
+                {{!-- Info container --}}
+                <div class="about-info-container">
+                    <div class="about-terminal-info active" data-info="0">
+                        <div class="about-section-label">01 — PARCOURS</div>
+                        <h2>Du code applicatif aux fondations</h2>
+                        <p>
+                            Mon parcours a commencé côté dev : d'abord du <strong>PHP</strong>, puis j'ai bifurqué 
+                            vers <strong>Angular en 2016</strong>. Mais rapidement, j'ai réalisé que ce qui me 
+                            passionnait vraiment, c'était pas tant d'écrire du code applicatif que de comprendre 
+                            comment tout ça tourne en dessous.
+                        </p>
+                        <p>
+                            Les <strong>containers</strong> ont été ma porte d'entrée vers l'infrastructure, 
+                            et <strong>Kubernetes</strong> m'a définitivement converti. Depuis, je n'ai jamais 
+                            regardé en arrière.
+                        </p>
+                    </div>
+
+                    <div class="about-terminal-info" data-info="1">
+                        <div class="about-section-label">02 — PHILOSOPHIE</div>
+                        <h2>L'infra comme du vrai code</h2>
+                        <p>
+                            Ma philosophie, c'est de traiter l'infrastructure comme du <strong>vrai code logiciel</strong>. 
+                            Pas juste "infrastructure as code" pour faire joli sur un CV, mais vraiment : versionné sous Git, 
+                            testé avant déploiement, documenté pour que le moi de dans six mois comprenne ce que le moi 
+                            d'aujourd'hui a fait.
+                        </p>
+                        <p>
+                            Je crois dur comme fer au <strong>pragmatisme technique</strong> : choisir la bonne techno 
+                            pour le bon problème, pas celle qui fait le buzz sur Twitter cette semaine.
+                        </p>
+                        <div class="about-quote">
+                            "Mon hobby ? Essayer d'exploser mes infras pour être sûr qu'elles ne le fassent pas d'elles-mêmes."
+                        </div>
+                    </div>
+
+                    <div class="about-terminal-info" data-info="2">
+                        <div class="about-section-label">03 — CE BLOG</div>
+                        <h2>Mon carnet de bord technique</h2>
+                        <p>
+                            Ce blog, c'est avant tout mon <strong>carnet de bord</strong>. Un endroit où je documente 
+                            ce que j'apprends, ce que je découvre, et ce que je galère à faire marcher. Parce que si 
+                            j'ai passé trois heures à débugger un truc obscur, autant que ça serve à quelqu'un d'autre.
+                        </p>
+                        <p>
+                            Pas de bullshit marketing, pas de "top 10 des outils DevOps", juste du <strong>concret</strong>, 
+                            du vécu, et de temps en temps un peu d'humour pour faire passer la pilule.
+                        </p>
+                        <p>
+                            Si un de mes articles t'évite de perdre une demi-journée sur un problème, alors mission accomplie.
+                        </p>
+                    </div>
+
+                    <div class="about-terminal-info" data-info="3">
+                        <div class="about-section-label">04 — ACTUELLEMENT</div>
+                        <h2>Inside & Low-layer</h2>
+                        <p>
+                            Je suis <strong>Expert DevOps chez Inside</strong> depuis avril 2024, où j'interviens 
+                            dans le secteur aéronautique sur des infrastructures critiques. Autant dire que la 
+                            fiabilité n'est vraiment pas négociable.
+                        </p>
+                        <p>
+                            En parallèle, je développe <strong>Low-layer</strong> : une plateforme de virtualisation 
+                            hyperconvergée sur Fedora CoreOS. C'est mon labo, mon terrain de jeu, et là où je teste 
+                            toutes les idées tordues que je ne peux pas déployer directement en prod chez mes clients.
+                        </p>
+                    </div>
+
+                    <div class="about-terminal-info" data-info="4">
+                        <div class="about-section-label">05 — STACK</div>
+                        <h2>Les outils du quotidien</h2>
+                        <p>
+                            7 ans de <strong>Kubernetes</strong>, contributeur au SIG Cloud Provider OpenStack. 
+                            Je travaille principalement sur des environnements <strong>Fedora et RHEL</strong>, 
+                            avec une approche Infrastructure as Code systématique.
+                        </p>
+                        <p>
+                            Terraform, Ansible, GitOps, Vault, observabilité... et une bonne dose de 
+                            <strong>chaos engineering</strong> pour garder tout ça résilient.
+                        </p>
+                    </div>
+                </div>
+
+                {{!-- Terminal window --}}
+                <div class="about-terminal">
+                    <div class="about-terminal-header">
+                        <div class="about-terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="about-terminal-title">benjamin@codermug:~</span>
+                    </div>
+                    <div class="about-terminal-body">
+                        
+                        <div class="about-terminal-content active" data-step="0">
+                            <div class="about-cmd-line">
+                                <span class="about-prompt">$</span> git log --oneline --graph --all life
+                            </div>
+                            <div class="about-cmd-output">
+                                <div><span class="hl">2024</span> <span class="wh">(HEAD) Expert DevOps @ Inside (Secteur Aéro)</span></div>
+                                <div><span class="hl">2020</span> <span class="wh">Migration GCP & Environnements Critiques</span></div>
+                                <div><span class="hl">2018</span> <span class="wh">Contributeur Kubernetes SIG & Cloud Provider OpenStack</span></div>
+                                <div><span class="hl">2017</span> <span class="wh">Cloud Scale-up (AWS / OVH)</span></div>
+                                <div><span class="hl">2016</span> <span class="wh">Bifurcation Angular & Modern Web</span></div>
+                                <div><span class="hl">2014</span> <span class="wh">Fullstack PHP Era</span></div>
+                                <div><span class="hl">2010</span> <span class="wh">Adoption Linux (Daily Driver)</span></div>
+                                <div><span class="hl">2008</span> <span class="wh">C & Low-level logic</span></div>
+                                <div><span class="hl">1994</span> <span class="wh">Initial Commit: Birth</span></div>
+                            </div>
+                            <div class="about-cmd-line about-cmd-last">
+                                <span class="about-prompt">$</span> <span class="about-terminal-cursor"></span>
+                            </div>
+                        </div>
+
+                        <div class="about-terminal-content" data-step="1">
+                            <div class="about-cmd-line">
+                                <span class="about-prompt">$</span> cat principles.yaml
+                            </div>
+                            <div class="about-cmd-output">
+                                <div><span class="hl">infrastructure_as_code:</span> <span class="wh">true</span></div>
+                                <div><span class="hl">chaos_engineering:</span> <span class="wh">enabled</span></div>
+                                <div><span class="hl">manual_operations:</span> <span class="wh">forbidden</span></div>
+                                <div><span class="hl">hype_driven_dev:</span> <span class="wh">false</span></div>
+                                <div><span class="hl">documentation:</span> <span class="wh">mandatory</span></div>
+                                <div><span class="hl">pragmatism:</span> <span class="wh">100%</span></div>
+                            </div>
+                            <div class="about-cmd-line about-cmd-last">
+                                <span class="about-prompt">$</span> <span class="about-terminal-cursor"></span>
+                            </div>
+                        </div>
+
+                        <div class="about-terminal-content" data-step="2">
+                            <div class="about-cmd-line">
+                                <span class="about-prompt">$</span> ls -la content/
+                            </div>
+                            <div class="about-cmd-output">
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">kubernetes/</span></div>
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">cloud-native/</span></div>
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">sre/</span></div>
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">archi/</span></div>
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">post-mortems/</span></div>
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">best-practices/</span></div>
+                                <div><span class="hl">drwxr-xr-x</span>  <span class="wh">debug-stories/</span></div>
+                                <div><span class="hl">-rw-r--r--</span>  <span class="wh">echecs-et-lecons.md</span></div>
+                            </div>
+                            <div class="about-cmd-line about-cmd-last">
+                                <span class="about-prompt">$</span> <span class="about-terminal-cursor"></span>
+                            </div>
+                        </div>
+
+                        <div class="about-terminal-content" data-step="3">
+                            <div class="about-cmd-line">
+                                <span class="about-prompt">$</span> kubectl get pods -n projects
+                            </div>
+                            <div class="about-cmd-output">
+                                <div><span class="wh">NAME              READY   STATUS     AGE</span></div>
+                                <div><span class="hl">inside-devops</span>    <span class="wh">1/1     Running     Since Apr 2024</span></div>
+                                <div><span class="hl">low-layer</span>        <span class="wh">1/1     Building     Nights/WE</span></div>
+                                <div><span class="hl">k8s-contrib</span>      <span class="wh">1/1     Running     Continuous</span></div>
+                                <div><span class="hl">openstack-contrib</span><span class="wh">1/1     Running     Continuous</span></div>
+                                <div><span class="hl">coffee-intake</span>    <span class="wh">∞/∞     Running     Birthday</span></div>
+                            </div>
+                            <div class="about-cmd-line about-cmd-last">
+                                <span class="about-prompt">$</span> <span class="about-terminal-cursor"></span>
+                            </div>
+                        </div>
+
+                        <div class="about-terminal-content" data-step="4">
+                            <div class="about-cmd-line">
+                                <span class="about-prompt">$</span> ./check_capabilities.sh --target=production
+                            </div>
+                            <div class="about-cmd-output">
+                                <div><span class="hl">[OK]</span>  <span class="wh">Kubernetes Ecosystem (7 years exp)</span></div>
+                                <div><span class="hl">[OK]</span>  <span class="wh">Cloud Architecture</span></div>
+                                <div><span class="hl">[OK]</span>  <span class="wh">RHEL / Fedora CoreOS / Linux Internals</span></div>
+                                <div><span class="hl">[OK]</span>  <span class="wh">Terraform / Ansible / Vault</span></div>
+                                <div><span class="hl">[OK]</span>  <span class="wh">Observability Stack (Prometheus/Grafana)</span></div>
+                                <div><span class="hl">[OK]</span>  <span class="wh">Language: Go / Rust / Python</span></div>
+                                <div><span class="hl">---------------------------------------------</span></div>
+                                <div><span class="hl">Status: READY FOR DEPLOYMENT</span></div>
+                            </div>
+                            <div class="about-cmd-line about-cmd-last">
+                                <span class="about-prompt">$</span> <span class="about-terminal-cursor"></span>
+                            </div>
+                        </div>
+
+                        <div class="about-terminal-progress">
+                            <div class="about-terminal-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 2: CLOUD NATIVE & KUBERNETES --}}
+        <section class="about-section about-stack-section" data-section="2">
+            <div class="about-stack-container">
+                <div class="about-stack-header">
+                    <h2>// CLOUD NATIVE & KUBERNETES</h2>
+                    <p class="about-stack-intro">
+                        Plus de 7 ans à orchestrer des conteneurs, configurer des CNI, et observer ce qui se passe vraiment en prod. 
+                        Kubernetes n'est pas juste un outil : c'est devenu mon terrain de jeu quotidien, 
+                        de l'architecture réseau jusqu'à l'observabilité.
+                    </p>
+                </div>
+                <div class="about-stack-grid">
+                    <div class="about-stack-item"><div class="icon">☸️</div><div class="name">Kubernetes</div></div>
+                    <div class="about-stack-item"><div class="icon">🐳</div><div class="name">Docker</div></div>
+                    <div class="about-stack-item"><div class="icon">🦭</div><div class="name">Podman</div></div>
+                    <div class="about-stack-item"><div class="icon">🌿</div><div class="name">Cilium</div></div>
+                    <div class="about-stack-item"><div class="icon">🐯</div><div class="name">Calico</div></div>
+                    <div class="about-stack-item"><div class="icon">⛵</div><div class="name">Istio</div></div>
+                    <div class="about-stack-item"><div class="icon">📀</div><div class="name">etcd</div></div>
+                    <div class="about-stack-item"><div class="icon">💾</div><div class="name">Ceph</div></div>
+                    <div class="about-stack-item"><div class="icon">📊</div><div class="name">Prometheus</div></div>
+                    <div class="about-stack-item"><div class="icon">📈</div><div class="name">Grafana</div></div>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 3: CLOUD & INFRASTRUCTURE --}}
+        <section class="about-section about-stack-section" data-section="3">
+            <div class="about-stack-container">
+                <div class="about-stack-header">
+                    <h2>// CLOUD & INFRASTRUCTURE</h2>
+                    <p class="about-stack-intro">
+                        Des années à déployer pour des grands comptes m'ont appris une chose : 
+                        chaque cloud a ses forces, et l'Infrastructure as Code n'est pas négociable. 
+                        Du provisionning au hardening, tout doit être reproductible et versionné.
+                    </p>
+                </div>
+                <div class="about-stack-grid">
+                    <div class="about-stack-item"><div class="icon">🌐</div><div class="name">AWS</div></div>
+                    <div class="about-stack-item"><div class="icon">☁️</div><div class="name">GCP</div></div>
+                    <div class="about-stack-item"><div class="icon">🇫🇷</div><div class="name">OVH</div></div>
+                    <div class="about-stack-item"><div class="icon">☁️</div><div class="name">OpenStack</div></div>
+                    <div class="about-stack-item"><div class="icon">🏗️</div><div class="name">Terraform</div></div>
+                    <div class="about-stack-item"><div class="icon">📦</div><div class="name">Packer</div></div>
+                    <div class="about-stack-item"><div class="icon">⚙️</div><div class="name">Ansible</div></div>
+                    <div class="about-stack-item"><div class="icon">🤖</div><div class="name">AAP</div></div>
+                    <div class="about-stack-item"><div class="icon">🐧</div><div class="name">Fedora CoreOS</div></div>
+                    <div class="about-stack-item"><div class="icon">🎩</div><div class="name">RHEL</div></div>
+                    <div class="about-stack-item"><div class="icon">🔐</div><div class="name">Vault</div></div>
+                    <div class="about-stack-item"><div class="icon">🔑</div><div class="name">Keycloak</div></div>
+                    <div class="about-stack-item"><div class="icon">🧭</div><div class="name">Consul</div></div>
+                    <div class="about-stack-item"><div class="icon">⚖️</div><div class="name">HAProxy</div></div>
+                    <div class="about-stack-item"><div class="icon">🌐</div><div class="name">Nginx</div></div>
+                    <div class="about-stack-item"><div class="icon">🪶</div><div class="name">Apache</div></div>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 4: APPLICATIONS & DATA --}}
+        <section class="about-section about-stack-section" data-section="4">
+            <div class="about-stack-container">
+                <div class="about-stack-header">
+                    <h2>// APPLICATIONS & DATA</h2>
+                    <p class="about-stack-intro">
+                        Avant l'infra, il y a eu le code. Du développement web aux architectures cloud native, 
+                        cette expérience me permet de comprendre ce qui tourne dans les conteneurs 
+                        , pas juste comment les orchestrer.
+                    </p>
+                </div>
+                <div class="about-stack-grid">
+                    <div class="about-stack-item"><div class="icon">🦀</div><div class="name">Rust</div></div>
+                    <div class="about-stack-item"><div class="icon">🐹</div><div class="name">Go</div></div>
+                    <div class="about-stack-item"><div class="icon">🐍</div><div class="name">Python</div></div>
+                    <div class="about-stack-item"><div class="icon">💚</div><div class="name">Node.js</div></div>
+                    <div class="about-stack-item"><div class="icon">🐘</div><div class="name">PostgreSQL</div></div>
+                    <div class="about-stack-item"><div class="icon">🦭</div><div class="name">MariaDB</div></div>
+                    <div class="about-stack-item"><div class="icon">⚡</div><div class="name">Memcached</div></div>
+                    <div class="about-stack-item"><div class="icon">🐰</div><div class="name">RabbitMQ</div></div>
+                    <div class="about-stack-item"><div class="icon">📨</div><div class="name">Kafka</div></div>
+                    <div class="about-stack-item"><div class="icon">🏭</div><div class="name">ActiveMQ</div></div>
+                    <div class="about-stack-item"><div class="icon">🦊</div><div class="name">GitLab</div></div>
+                    <div class="about-stack-item"><div class="icon">🐸</div><div class="name">JFrog</div></div>
+                    <div class="about-stack-item"><div class="icon">🚢</div><div class="name">Harbor</div></div>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 5: PRACTICES --}}
+        <section class="about-section about-stack-section" data-section="5">
+            <div class="about-stack-container">
+                <div class="about-stack-header">
+                    <h2>// PRACTICES</h2>
+                    <p class="about-stack-intro">
+                        L'architecture SRE, c'est agencer, organiser et éprouver des solutions 
+                        pour garantir les niveaux les plus stricts de performance. 
+                        Pour ceux dont la stabilité et la disponibilité sont des enjeux critiques, 
+                        ces pratiques ne sont pas optionnelles.
+                    </p>
+                </div>
+                <div class="about-stack-grid about-stack-grid-centered">
+                    <div class="about-stack-item"><div class="icon">♾️</div><div class="name">DevOps</div></div>
+                    <div class="about-stack-item"><div class="icon">🔄</div><div class="name">GitOps</div></div>
+                    <div class="about-stack-item"><div class="icon">💥</div><div class="name">Chaos Eng.</div></div>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 6: CONTACT --}}
+        <section class="about-section about-contact-section" data-section="6">
+            <h2 class="about-contact-title">On <span class="highlight">échange</span> ?</h2>
+            <p class="about-contact-subtitle">
+                Une question, un projet, ou juste envie de parler infra autour d'un café virtuel.
+            </p>
+            <div class="about-contact-links">
+                <a href="https://github.com/Astocanthus" class="about-contact-link" target="_blank" rel="noopener">
+                    <span>⚡</span> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/benjamin-romeo-1a533093/" class="about-contact-link" target="_blank" rel="noopener">
+                    <span>🔗</span> LinkedIn
+                </a>
+            </div>
+            <p class="about-footer-tagline">
+                <span class="highlight">Auto-hébergé</span> — Sous containers et sous caféine ☕
+            </p>
+        </section>
+
+    </div>
+</div>

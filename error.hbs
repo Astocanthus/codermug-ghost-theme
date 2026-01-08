@@ -1,0 +1,178 @@
+{{!< default}} <div class="content-wrapper">
+  <section class="error-page">
+    <div class="error-container">
+      <div class="error-code">
+        <span class="glitch" data-text="{{statusCode}}">{{statusCode}}</span>
+      </div>
+
+      <h1 class="error-title">
+        {{#is statusCode "404"}}
+        Page non trouvée
+        {{else}}
+        Une erreur est survenue
+        {{/is}}
+      </h1>
+
+      <p class="error-message">{{message}}</p>
+
+      <a href="{{@site.url}}" class="btn-primary error-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Retour à l'accueil
+      </a>
+    </div>
+  </section>
+  </div>
+
+  <style>
+    .error-page {
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--spacing-xl);
+    }
+
+    .error-container {
+      max-width: 500px;
+    }
+
+    .error-code {
+      font-size: clamp(6rem, 20vw, 10rem);
+      font-weight: 900;
+      font-family: var(--font-mono);
+      line-height: 1;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .glitch {
+      position: relative;
+      color: var(--color-orange);
+      text-shadow: var(--glow-orange-strong);
+      animation: glitch 2s infinite;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .glitch::before {
+      animation: glitch-1 0.3s infinite;
+      color: var(--color-orange-light);
+      z-index: -1;
+    }
+
+    .glitch::after {
+      animation: glitch-2 0.3s infinite;
+      color: var(--color-orange-dark);
+      z-index: -2;
+    }
+
+    @keyframes glitch {
+
+      0%,
+      90%,
+      100% {
+        transform: translate(0);
+      }
+
+      92% {
+        transform: translate(-2px, 2px);
+      }
+
+      94% {
+        transform: translate(2px, -2px);
+      }
+
+      96% {
+        transform: translate(-2px, -2px);
+      }
+
+      98% {
+        transform: translate(2px, 2px);
+      }
+    }
+
+    @keyframes glitch-1 {
+
+      0%,
+      100% {
+        clip-path: inset(0 0 0 0);
+        transform: translate(0);
+      }
+
+      20% {
+        clip-path: inset(20% 0 60% 0);
+        transform: translate(-3px);
+      }
+
+      40% {
+        clip-path: inset(50% 0 30% 0);
+        transform: translate(3px);
+      }
+
+      60% {
+        clip-path: inset(70% 0 10% 0);
+        transform: translate(-3px);
+      }
+
+      80% {
+        clip-path: inset(10% 0 80% 0);
+        transform: translate(3px);
+      }
+    }
+
+    @keyframes glitch-2 {
+
+      0%,
+      100% {
+        clip-path: inset(0 0 0 0);
+        transform: translate(0);
+      }
+
+      20% {
+        clip-path: inset(60% 0 20% 0);
+        transform: translate(3px);
+      }
+
+      40% {
+        clip-path: inset(30% 0 50% 0);
+        transform: translate(-3px);
+      }
+
+      60% {
+        clip-path: inset(10% 0 70% 0);
+        transform: translate(3px);
+      }
+
+      80% {
+        clip-path: inset(80% 0 10% 0);
+        transform: translate(-3px);
+      }
+    }
+
+    .error-title {
+      font-size: 1.5rem;
+      margin: 0 0 var(--spacing-sm) 0;
+      color: var(--color-text);
+    }
+
+    .error-message {
+      color: var(--color-text-muted);
+      margin: 0 0 var(--spacing-lg) 0;
+    }
+
+    .error-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+  </style>
