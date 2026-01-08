@@ -6,6 +6,11 @@
    PAGE RESET
    ========================================================================== */
 
+html.page-about {
+    overflow-y: hidden;
+    scrollbar-gutter: auto;
+}
+
 body.page-template-page-about,
 body.page-template-page-about .site-content {
     overflow: hidden;
