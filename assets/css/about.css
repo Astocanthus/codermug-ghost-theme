@@ -572,7 +572,7 @@ body.page-template-page-about .site-footer {
 }
 
 .about-stack-grid-centered {
-    max-width: 500px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -697,7 +697,7 @@ body.page-template-page-about .site-footer {
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 1650px) {
+   @media (max-width: 1650px) {
   .about-hero-photo img {
     object-fit: cover;
   }
