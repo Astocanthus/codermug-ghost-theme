@@ -1,0 +1,638 @@
+<script>
+/* ==========================================================================
+   Circuit Background Animation
+   ========================================================================== */
+
+(function() {
+  const canvas = document.getElementById('circuitCanvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const ORANGE = { r: 255, g: 140, b: 0 };
+
+  let width, height, dpr;
+  let circuits = [];
+  let particles = [];
+  let floatingSymbols = [];
+  let sideCircuits = [];
+  let baseScrollOffset = 0;
+  const baseScrollSpeed = 0.7;
+
+  let leftRailX, rightRailX;
+  let gridPattern = null;
+  let animationId = null;
+
+  const depthLayers = [
+    { depth: 0.3, opacity: 0.06, lineWidth: 0.2, glowSize: 10, xZone: [0.01, 0.06], scrollFactor: 0.5 },
+    { depth: 0.5, opacity: 0.10, lineWidth: 0.3, glowSize: 14, xZone: [0.06, 0.12], scrollFactor: 0.7 },
+    { depth: 0.75, opacity: 0.14, lineWidth: 0.4, glowSize: 20, xZone: [0.12, 0.18], scrollFactor: 0.85 },
+    { depth: 1.0, opacity: 0.20, lineWidth: 0.6, glowSize: 28, xZone: [0.18, 0.26], scrollFactor: 1.0 }
+  ];
+
+  const MIN_HORIZONTAL_MARGIN = 25;
+
+  function createGridPattern() {
+    const patternCanvas = document.createElement('canvas');
+    const patternCtx = patternCanvas.getContext('2d');
+    const size = 60;
+    patternCanvas.width = size;
+    patternCanvas.height = size;
+
+    patternCtx.fillStyle = '#08080c';
+    patternCtx.fillRect(0, 0, size, size);
+
+    patternCtx.strokeStyle = 'rgba(255, 140, 0, 0.015)';
+    patternCtx.lineWidth = 0.5;
+
+    patternCtx.beginPath();
+    patternCtx.moveTo(size, 0);
+    patternCtx.lineTo(size, size);
+    patternCtx.stroke();
+
+    patternCtx.beginPath();
+    patternCtx.moveTo(0, size);
+    patternCtx.lineTo(size, size);
+    patternCtx.stroke();
+
+    patternCtx.strokeStyle = 'rgba(255, 140, 0, 0.008)';
+    patternCtx.beginPath();
+    patternCtx.moveTo(size / 2, 0);
+    patternCtx.lineTo(size / 2, size);
+    patternCtx.moveTo(0, size / 2);
+    patternCtx.lineTo(size, size / 2);
+    patternCtx.stroke();
+
+    return ctx.createPattern(patternCanvas, 'repeat');
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    leftRailX = width * 0.32;
+    rightRailX = width * 0.68;
+
+    gridPattern = createGridPattern();
+
+    circuits = [];
+    particles = [];
+    floatingSymbols = [];
+    sideCircuits = [];
+    baseScrollOffset = 0;
+
+    generateInitialCircuits();
+    generateParticles();
+    generateFloatingSymbols();
+    generateSideCircuits();
+  }
+
+  function generateSideCircuits() {
+    for (let y = height + 600; y > -600; y -= height * 0.35 + Math.random() * height * 0.2) {
+      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(y, 'left'));
+      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(y + height * 0.15 + Math.random() * height * 0.1, 'right'));
+    }
+  }
+
+  function createSideCircuit(baseY, side) {
+    const depth = 0.5 + Math.random() * 0.5;
+    const startX = side === 'left' ? leftRailX : rightRailX;
+    const path = [{ x: startX, localY: 0 }];
+    let x = startX;
+    let localY = 0;
+
+    const segments = 2 + Math.floor(Math.random() * 3);
+    const direction = side === 'left' ? -1 : 1;
+
+    for (let s = 0; s < segments; s++) {
+      x += (50 + Math.random() * 100) * direction;
+      path.push({ x, localY });
+
+      if (s < segments - 1 && Math.random() > 0.4) {
+        const diagLength = 20 + Math.random() * 40;
+        x += diagLength * direction;
+        localY += diagLength * (Math.random() > 0.5 ? 1 : -1);
+        path.push({ x, localY });
+      }
+    }
+
+    path.push({ x: side === 'left' ? -30 : width + 30, localY });
+
+    return {
+      baseY, side, path, startX,
+      opacity: 0.08 + Math.random() * 0.12 * depth,
+      lineWidth: 0.6 + Math.random() * 0.8 * depth,
+      glowSize: 10 + Math.random() * 15 * depth,
+      depth,
+      parallaxFactor: 0.55 + depth * 0.45
+    };
+  }
+
+  function hasHorizontalConflict(x, side) {
+    return circuits.some(c => c.side === side && c.path.some(p => Math.abs(p.x - x) < MIN_HORIZONTAL_MARGIN));
+  }
+
+  function findValidX(layer, side) {
+    const zoneStart = layer.xZone[0] * width;
+    const zoneEnd = layer.xZone[1] * width;
+
+    for (let i = 0; i < 10; i++) {
+      const x = side === 'left' 
+        ? zoneStart + Math.random() * (zoneEnd - zoneStart)
+        : width - zoneStart - Math.random() * (zoneEnd - zoneStart);
+      if (!hasHorizontalConflict(x, side)) return x;
+    }
+    return null;
+  }
+
+  function generateCircuit(bottomY, layer, side) {
+    const baseX = findValidX(layer, side);
+    if (baseX === null) return null;
+
+    const zoneStart = layer.xZone[0] * width;
+    const zoneEnd = layer.xZone[1] * width;
+    const path = [];
+    let x = baseX;
+    let y = bottomY;
+
+    path.push({ x, y });
+
+    const segments = 3 + Math.floor(Math.random() * 4);
+
+    for (let s = 0; s < segments; s++) {
+      y -= 60 + Math.random() * 120;
+      path.push({ x, y });
+
+      if (s < segments - 1 && Math.random() > 0.3) {
+        const diagLength = 15 + Math.random() * 40;
+        const diagDir = Math.random() > 0.5 ? 1 : -1;
+        let newX = x + diagLength * diagDir;
+
+        if (side === 'left') {
+          newX = Math.max(zoneStart + 5, Math.min(zoneEnd - 5, newX));
+        } else {
+          newX = Math.max(width - zoneEnd + 5, Math.min(width - zoneStart - 5, newX));
+        }
+
+        if (!hasHorizontalConflict(newX, side)) {
+          y -= Math.abs(newX - x);
+          x = newX;
+          path.push({ x, y });
+        }
+      }
+    }
+
+    y -= 40 + Math.random() * 80;
+    path.push({ x, y });
+
+    const topY = Math.min(...path.map(p => p.y));
+
+    const verticalSegments = [];
+    for (let i = 1; i < path.length; i++) {
+      if (Math.abs(path[i].x - path[i - 1].x) < 3) {
+        const length = Math.abs(path[i].y - path[i - 1].y);
+        if (length > 50) {
+          verticalSegments.push({
+            x: path[i].x,
+            yTop: Math.min(path[i].y, path[i - 1].y),
+            yBottom: Math.max(path[i].y, path[i - 1].y),
+            length
+          });
+        }
+      }
+    }
+
+    let runner = null;
+    if (verticalSegments.length > 0 && Math.random() > 0.6) {
+      const segment = verticalSegments[Math.floor(Math.random() * verticalSegments.length)];
+      runner = {
+        segment,
+        centerY: (segment.yTop + segment.yBottom) / 2,
+        oscillationRange: Math.min(segment.length * 0.18, 18 + Math.random() * 18),
+        oscillationSpeed: 0.012 + Math.random() * 0.018,
+        oscillationPhase: Math.random() * Math.PI * 2,
+        streakLength: 12 + Math.random() * 28,
+        brightness: 0.7 + Math.random() * 0.3
+      };
+    }
+
+    return {
+      path, side, layer, bottomY, topY, runner,
+      topPulsePhase: Math.random() * Math.PI * 2,
+      bottomPulsePhase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.025 + Math.random() * 0.02
+    };
+  }
+
+  function canPlaceCircuit(bottomY, layer, side) {
+    return !circuits.some(c => c.layer === layer && c.side === side && Math.abs(c.bottomY - bottomY) < 180);
+  }
+
+  function generateInitialCircuits() {
+    depthLayers.forEach(layer => {
+      for (let y = height + 700; y > -height; y -= 200 + Math.random() * 120) {
+        if (Math.random() > 0.25 && canPlaceCircuit(y, layer, 'left')) {
+          const circuit = generateCircuit(y, layer, 'left');
+          if (circuit) circuits.push(circuit);
+        }
+        if (Math.random() > 0.25 && canPlaceCircuit(y + 100, layer, 'right')) {
+          const circuit = generateCircuit(y + 100 + Math.random() * 60, layer, 'right');
+          if (circuit) circuits.push(circuit);
+        }
+      }
+    });
+  }
+
+  function generateParticles() {
+    for (let i = 0; i < 150; i++) {
+      particles.push(createParticle(Math.random() * (height + 800) - 200));
+    }
+  }
+
+  function createParticle(baseY) {
+    const depth = 0.2 + Math.random() * 0.8;
+    const side = Math.random() > 0.5;
+    const xRange = width * 0.45;
+    return {
+      x: side ? (20 + Math.random() * xRange) : (width - 20 - Math.random() * xRange),
+      baseY,
+      size: 0.3 + Math.random() * 1.2 * depth,
+      opacity: 0.04 + Math.random() * 0.12 * depth,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.01 + Math.random() * 0.02,
+      depth,
+      parallaxFactor: 0.3 + depth * 0.7
+    };
+  }
+
+  function generateFloatingSymbols() {
+    for (let i = 0; i < 40; i++) {
+      floatingSymbols.push(createFloatingSymbol(Math.random() * (height + 800) - 200));
+    }
+  }
+
+  function createFloatingSymbol(baseY) {
+    const depth = 0.15 + Math.random() * 0.85;
+    const side = Math.random() > 0.5;
+    const xRange = width * 0.45;
+    const baseSize = 3 + Math.random() * 15;
+    const size = baseSize * (0.4 + depth * 0.8);
+
+    return {
+      x: side ? (30 + Math.random() * xRange) : (width - 30 - Math.random() * xRange),
+      baseY,
+      type: Math.floor(Math.random() * 5),
+      size,
+      opacity: 0.08 + Math.random() * 0.35 * depth,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.003,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.01 + Math.random() * 0.02,
+      depth,
+      parallaxFactor: 0.15 + depth * 0.85,
+      glowSize: size * (1.5 + Math.random() * 1.5)
+    };
+  }
+
+  function update() {
+    baseScrollOffset += baseScrollSpeed;
+
+    circuits.forEach(c => {
+      c.topPulsePhase += c.pulseSpeed;
+      c.bottomPulsePhase += c.pulseSpeed * 0.85;
+      if (c.runner) c.runner.oscillationPhase += c.runner.oscillationSpeed;
+    });
+
+    particles.forEach(p => p.pulse += p.pulseSpeed);
+    floatingSymbols.forEach(s => {
+      s.rotation += s.rotationSpeed;
+      s.pulse += s.pulseSpeed;
+    });
+
+    circuits = circuits.filter(c => {
+      const screenBottomY = c.bottomY - baseScrollOffset * c.layer.scrollFactor;
+      return screenBottomY > -50;
+    });
+
+    depthLayers.forEach(layer => {
+      const layerCircuits = circuits.filter(c => c.layer === layer);
+      const layerScroll = baseScrollOffset * layer.scrollFactor;
+      const maxBottomY = layerCircuits.length > 0 ? Math.max(...layerCircuits.map(c => c.bottomY)) : layerScroll + height;
+
+      if (maxBottomY < layerScroll + height + 500) {
+        const newBottomY = maxBottomY + 180 + Math.random() * 100;
+        if (Math.random() > 0.3 && canPlaceCircuit(newBottomY, layer, 'left')) {
+          const circuit = generateCircuit(newBottomY, layer, 'left');
+          if (circuit) circuits.push(circuit);
+        }
+        if (Math.random() > 0.3 && canPlaceCircuit(newBottomY + 80, layer, 'right')) {
+          const circuit = generateCircuit(newBottomY + 80 + Math.random() * 60, layer, 'right');
+          if (circuit) circuits.push(circuit);
+        }
+      }
+    });
+
+    sideCircuits = sideCircuits.filter(c => c.baseY - baseScrollOffset * c.parallaxFactor > -150);
+
+    const maxSideY = sideCircuits.length > 0 ? Math.max(...sideCircuits.map(c => c.baseY)) : baseScrollOffset + height;
+    if (maxSideY < baseScrollOffset + height + 400) {
+      const newY = maxSideY + height * 0.35 + Math.random() * height * 0.2;
+      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(newY, 'left'));
+      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(newY + height * 0.15 + Math.random() * height * 0.1, 'right'));
+    }
+
+    particles = particles.filter(p => p.baseY - baseScrollOffset * p.parallaxFactor > -50);
+    while (particles.length < 150) {
+      const maxBaseY = particles.length > 0 ? Math.max(...particles.map(p => p.baseY)) : baseScrollOffset + height;
+      particles.push(createParticle(maxBaseY + 30 + Math.random() * 60));
+    }
+
+    floatingSymbols = floatingSymbols.filter(s => s.baseY - baseScrollOffset * s.parallaxFactor > -80);
+    while (floatingSymbols.length < 40) {
+      const maxBaseY = floatingSymbols.length > 0 ? Math.max(...floatingSymbols.map(s => s.baseY)) : baseScrollOffset + height;
+      floatingSymbols.push(createFloatingSymbol(maxBaseY + 40 + Math.random() * 100));
+    }
+  }
+
+  function render() {
+    const { r, g, b } = ORANGE;
+
+    ctx.fillStyle = '#050508';
+    ctx.fillRect(0, 0, width, height);
+
+    if (gridPattern) {
+      ctx.fillStyle = gridPattern;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    const bgGradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * 0.8);
+    bgGradient.addColorStop(0, 'rgba(5, 5, 10, 0.9)');
+    bgGradient.addColorStop(0.5, 'rgba(8, 6, 12, 0.5)');
+    bgGradient.addColorStop(0.8, 'rgba(15, 8, 5, 0.3)');
+    bgGradient.addColorStop(1, 'rgba(20, 10, 5, 0.4)');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+    for (let y = 0; y < height; y += 3) ctx.fillRect(0, y, width, 1);
+
+    const vignette = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * 0.7);
+    vignette.addColorStop(0, 'rgba(0,0,0,0)');
+    vignette.addColorStop(0.7, 'rgba(0,0,0,0.2)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.6)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Particles
+    particles.forEach(p => {
+      const screenY = p.baseY - baseScrollOffset * p.parallaxFactor;
+      if (screenY < -20 || screenY > height + 20) return;
+
+      const pulse = Math.sin(p.pulse) * 0.4 + 0.6;
+      const alpha = p.opacity * pulse;
+
+      const gradient = ctx.createRadialGradient(p.x, screenY, 0, p.x, screenY, p.size * 4);
+      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha})`);
+      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`);
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(p.x, screenY, p.size * 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Floating symbols
+    [...floatingSymbols].sort((a, b) => a.depth - b.depth).forEach(symbol => {
+      const screenY = symbol.baseY - baseScrollOffset * symbol.parallaxFactor;
+      if (screenY < -60 || screenY > height + 60) return;
+
+      const { x, type, size, opacity, rotation, pulse, glowSize, depth } = symbol;
+      const pulseVal = Math.sin(pulse) * 0.35 + 0.65;
+      const alpha = opacity * pulseVal;
+
+      ctx.save();
+      ctx.translate(x, screenY);
+      ctx.rotate(rotation);
+
+      const glowGradient = ctx.createRadialGradient(0, 0, size * 0.2, 0, 0, glowSize);
+      glowGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.8})`);
+      glowGradient.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`);
+      glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glowGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, glowSize, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      ctx.lineWidth = 0.5 + depth * 0.3;
+
+      ctx.beginPath();
+      if (type === 0) {
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (type === 1) {
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (type === 2) {
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.55, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (type === 3) {
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.6, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.moveTo(0, -size);
+        ctx.lineTo(size * 0.7, 0);
+        ctx.lineTo(0, size);
+        ctx.lineTo(-size * 0.7, 0);
+        ctx.closePath();
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    // Back wall circuits
+    [...circuits].sort((a, b) => a.layer.depth - b.layer.depth).forEach(circuit => {
+      const { path, layer, runner, topPulsePhase, bottomPulsePhase, topY, bottomY } = circuit;
+      const { opacity, lineWidth, glowSize, depth, scrollFactor } = layer;
+      const layerScroll = baseScrollOffset * scrollFactor;
+
+      const screenPath = path.map(p => ({ x: p.x, y: p.y - layerScroll }));
+      const screenTopY = topY - layerScroll;
+      const screenBottomY = bottomY - layerScroll;
+
+      if (screenBottomY < -20 || screenTopY > height + 20) return;
+
+      ctx.save();
+      ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
+      ctx.shadowBlur = glowSize;
+      ctx.beginPath();
+      ctx.moveTo(screenPath[0].x, screenPath[0].y);
+      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`;
+      ctx.lineWidth = lineWidth * 2.5;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.8)`;
+      ctx.shadowBlur = glowSize * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(screenPath[0].x, screenPath[0].y);
+      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+      ctx.restore();
+
+      // Endpoint halos
+      [screenPath[0], screenPath[screenPath.length - 1]].forEach((point, idx) => {
+        if (point.y < -40 || point.y > height + 40) return;
+        const pulse = Math.sin(idx === 0 ? bottomPulsePhase : topPulsePhase) * 0.3 + 0.7;
+        const haloSize = (4 + glowSize * 0.25) * depth;
+
+        const glow = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, haloSize * 2);
+        glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 1.5 * pulse})`);
+        glow.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${opacity * 0.5 * pulse})`);
+        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, haloSize * 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 2 * pulse})`;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 1.5 * depth, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Runner
+      if (runner) {
+        const { segment, centerY, oscillationRange, oscillationPhase, streakLength, brightness } = runner;
+        const runnerY = centerY + Math.sin(oscillationPhase) * oscillationRange;
+        const screenRunnerY = runnerY - layerScroll;
+        const x = segment.x;
+
+        if (segment.yBottom - layerScroll > 0 && segment.yTop - layerScroll < height && screenRunnerY > -30 && screenRunnerY < height + 30) {
+          const halfStreak = streakLength / 2;
+
+          ctx.save();
+          ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
+          ctx.shadowBlur = glowSize * 2;
+          ctx.beginPath();
+          ctx.moveTo(x, screenRunnerY - halfStreak);
+          ctx.lineTo(x, screenRunnerY + halfStreak);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${brightness * 0.3})`;
+          ctx.lineWidth = 6 * depth;
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.save();
+          ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
+          ctx.shadowBlur = glowSize;
+          ctx.beginPath();
+          ctx.moveTo(x, screenRunnerY - halfStreak);
+          ctx.lineTo(x, screenRunnerY + halfStreak);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${brightness * 0.6})`;
+          ctx.lineWidth = 3 * depth;
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.beginPath();
+          ctx.moveTo(x, screenRunnerY - halfStreak);
+          ctx.lineTo(x, screenRunnerY + halfStreak);
+          ctx.strokeStyle = `rgba(255, 220, 160, ${brightness})`;
+          ctx.lineWidth = 0.8 * depth;
+          ctx.stroke();
+        }
+      }
+    });
+
+    // Side wall circuits
+    const vanishingPointY = height * 0.5;
+
+    sideCircuits.forEach(circuit => {
+      const screenBaseY = circuit.baseY - baseScrollOffset * circuit.parallaxFactor;
+      if (screenBaseY < -150 || screenBaseY > height + 150) return;
+
+      const { path, opacity, lineWidth, glowSize, startX } = circuit;
+      const distFromCenter = screenBaseY - vanishingPointY;
+      const perspectiveFactor = (distFromCenter / (height * 0.5)) * 0.4;
+
+      const screenPath = path.map(p => ({
+        x: p.x,
+        y: screenBaseY + p.localY + Math.abs(p.x - startX) * perspectiveFactor
+      }));
+
+      const minY = Math.min(...screenPath.map(p => p.y));
+      const maxY = Math.max(...screenPath.map(p => p.y));
+      if (maxY < -50 || minY > height + 50) return;
+
+      ctx.save();
+      ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
+      ctx.shadowBlur = glowSize;
+      ctx.beginPath();
+      ctx.moveTo(screenPath[0].x, screenPath[0].y);
+      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 0.5})`;
+      ctx.lineWidth = lineWidth * 3;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.moveTo(screenPath[0].x, screenPath[0].y);
+      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+
+      const startPoint = screenPath[0];
+      if (startPoint.y > -30 && startPoint.y < height + 30) {
+        const haloSize = 4 + glowSize * 0.3;
+        const startGlow = ctx.createRadialGradient(startPoint.x, startPoint.y, 0, startPoint.x, startPoint.y, haloSize * 2);
+        startGlow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 2})`);
+        startGlow.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`);
+        startGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = startGlow;
+        ctx.beginPath();
+        ctx.arc(startPoint.x, startPoint.y, haloSize * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+  }
+
+  function animate() {
+    update();
+    render();
+    animationId = requestAnimationFrame(animate);
+  }
+
+  resize();
+  animate();
+  window.addEventListener('resize', resize);
+})();
+</script>

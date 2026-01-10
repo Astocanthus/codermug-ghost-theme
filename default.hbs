@@ -24,15 +24,15 @@
   {{ghost_head}}
 </head>
 
+{{> circuit-background-styles}}
+
 {{#is "page" slug="about"}}
     <script src="{{asset "js/about.js"}}"></script>
 {{/is}}
 <body class="{{body_class}}">
 
   <!-- Circuit Background Animation -->
-  <div class="circuit-background">
-    <canvas id="circuitCanvas"></canvas>
-  </div>
+  {{> circuit-background}}
 
   <!-- Header -->
   <header class="site-header">
@@ -210,10 +210,10 @@
     </div>
   </footer>
 {{/is}}
-  <script src="{{asset "js/circuit.js"}}"></script>
   <script src="{{asset "js/navigation.js"}}"></script>
   <script src="{{asset "js/slogan.js"}}"></script>
   <script src="{{asset "js/tag-icons.js"}}"></script>
+  {{> circuit-background-script}}
   {{ghost_foot}}
 </body>
 
