@@ -1,638 +1,501 @@
-<script>
-/* ==========================================================================
-   Circuit Background Animation
-   ========================================================================== */
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js",
+      "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/"
+    }
+  }
+</script>
 
-(function() {
-  const canvas = document.getElementById('circuitCanvas');
-  if (!canvas) return;
+<script type="module">
+  import * as THREE from 'three';
+  import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-  const ctx = canvas.getContext('2d');
-  const ORANGE = { r: 255, g: 140, b: 0 };
+  // --- CONFIGURATION ---
+  const CONFIG = {
+    ORANGE: 0xff8c00,
+    RUNNER_COLOR: 0xffaa44,
+    SPARK_COLOR: 0xffaa00, // ORANGE INTENSE
+    BLOOM_STRENGTH: 0.85,
+    BLOOM_RADIUS: 0.4,
+    BLOOM_THRESHOLD: 0.15,
+    GLOBAL_SPEED: 0.8,
 
-  let width, height, dpr;
-  let circuits = [];
-  let particles = [];
-  let floatingSymbols = [];
-  let sideCircuits = [];
-  let baseScrollOffset = 0;
-  const baseScrollSpeed = 0.7;
+    MIN_DIST_X: 40,
+    MAX_LINES_PER_SIDE: 4,
+    PARTICLE_COUNT: 700,
+    
+    // NOUVEAU: Espacement vertical des murs latéraux (800px = ~Moitié moins dense)
+    SIDE_SPACING: 800
+  };
 
-  let leftRailX, rightRailX;
-  let gridPattern = null;
-  let animationId = null;
+  const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance", alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  const depthLayers = [
-    { depth: 0.3, opacity: 0.06, lineWidth: 0.2, glowSize: 10, xZone: [0.01, 0.06], scrollFactor: 0.5 },
-    { depth: 0.5, opacity: 0.10, lineWidth: 0.3, glowSize: 14, xZone: [0.06, 0.12], scrollFactor: 0.7 },
-    { depth: 0.75, opacity: 0.14, lineWidth: 0.4, glowSize: 20, xZone: [0.12, 0.18], scrollFactor: 0.85 },
-    { depth: 1.0, opacity: 0.20, lineWidth: 0.6, glowSize: 28, xZone: [0.18, 0.26], scrollFactor: 1.0 }
+  // --- MONTAGE DOM ---
+  const container = document.getElementById('circuit-background');
+  if (container) {
+    while (container.firstChild) container.removeChild(container.firstChild);
+    container.appendChild(renderer.domElement);
+  } else {
+    renderer.domElement.style.position = 'fixed';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
+    renderer.domElement.style.zIndex = '-1';
+    document.body.appendChild(renderer.domElement);
+  }
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+
+  const camera = new THREE.OrthographicCamera(
+    window.innerWidth / -2, window.innerWidth / 2,
+    window.innerHeight / 2, window.innerHeight / -2,
+    1, 2000
+  );
+  camera.position.z = 1000;
+
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    CONFIG.BLOOM_STRENGTH, CONFIG.BLOOM_RADIUS, CONFIG.BLOOM_THRESHOLD
+  ));
+
+  // --- TEXTURES ---
+  function createTexture(drawFn, w = 64, h = 64) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    drawFn(ctx, w, h);
+    return new THREE.CanvasTexture(c);
+  }
+
+  const bgTex = createTexture((ctx, w, h) => {
+    ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, w, h);
+    const g = ctx.createRadialGradient(w / 2, h / 2, w * 0.6, w / 2, h / 2, w * 1.2);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(1, 'rgba(40, 15, 0, 0.1)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  }, 512, 512);
+
+  // HALO ADOUCI (Bout des lignes)
+  const haloTex = createTexture((ctx, w, h) => {
+    const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    // Opacité max réduite à 0.6 (au lieu de 1.0) pour moins d'agressivité
+    g.addColorStop(0, 'rgba(255, 140, 0, 0.6)'); 
+    g.addColorStop(0.5, 'rgba(255, 140, 0, 0.2)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  });
+
+  const runnerTex = createTexture((ctx, w, h) => {
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, 'rgba(255, 170, 68, 0)');
+    g.addColorStop(0.2, 'rgba(255, 170, 68, 0.6)');
+    g.addColorStop(0.8, 'rgba(255, 170, 68, 0.6)');
+    g.addColorStop(1, 'rgba(255, 170, 68, 0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(w * 0.2, 0, w * 0.6, h);
+  }, 16, 128);
+
+  // SPARK ADOUCI
+  const sparkTex = createTexture((ctx, w, h) => {
+    const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    // Coeur moins intense (0.8 au lieu de 1) et un peu plus jaune/doux
+    g.addColorStop(0, 'rgba(255, 200, 50, 0.8)'); 
+    g.addColorStop(0.4, 'rgba(255, 140, 0, 0.4)'); 
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  }, 32, 32);
+
+  const symbolsTex = [
+    createTexture((ctx, w, h) => { ctx.strokeStyle = '#ff8c00'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(w / 2, h / 2, w * 0.35, 0, Math.PI * 2); ctx.stroke(); }),
+    createTexture((ctx, w, h) => { ctx.strokeStyle = '#ff8c00'; ctx.lineWidth = 2; ctx.strokeRect(w * 0.25, h * 0.25, w * 0.5, h * 0.5); }),
+    createTexture((ctx, w, h) => { ctx.strokeStyle = '#ff8c00'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(w / 2, h * 0.2); ctx.lineTo(w * 0.8, h * 0.8); ctx.lineTo(w * 0.2, h * 0.8); ctx.closePath(); ctx.stroke(); })
   ];
 
-  const MIN_HORIZONTAL_MARGIN = 25;
+  // --- DATA ---
+  let width = window.innerWidth, height = window.innerHeight;
+  let leftRailX = width * 0.32, rightRailX = width * 0.68;
 
-  function createGridPattern() {
-    const patternCanvas = document.createElement('canvas');
-    const patternCtx = patternCanvas.getContext('2d');
-    const size = 60;
-    patternCanvas.width = size;
-    patternCanvas.height = size;
+  let circuits = [];
+  let sideCircuits = [];
+  let particles = [];
 
-    patternCtx.fillStyle = '#08080c';
-    patternCtx.fillRect(0, 0, size, size);
+  const depthLayers = [
+    { id: 0, depth: 0.3, opacity: 0.25, xZone: [0.01, 0.06] },
+    { id: 1, depth: 0.5, opacity: 0.35, xZone: [0.06, 0.12] },
+    { id: 2, depth: 0.75, opacity: 0.50, xZone: [0.12, 0.18] },
+    { id: 3, depth: 1.0, opacity: 0.75, xZone: [0.18, 0.26] }
+  ];
 
-    patternCtx.strokeStyle = 'rgba(255, 140, 0, 0.015)';
-    patternCtx.lineWidth = 0.5;
-
-    patternCtx.beginPath();
-    patternCtx.moveTo(size, 0);
-    patternCtx.lineTo(size, size);
-    patternCtx.stroke();
-
-    patternCtx.beginPath();
-    patternCtx.moveTo(0, size);
-    patternCtx.lineTo(size, size);
-    patternCtx.stroke();
-
-    patternCtx.strokeStyle = 'rgba(255, 140, 0, 0.008)';
-    patternCtx.beginPath();
-    patternCtx.moveTo(size / 2, 0);
-    patternCtx.lineTo(size / 2, size);
-    patternCtx.moveTo(0, size / 2);
-    patternCtx.lineTo(size, size / 2);
-    patternCtx.stroke();
-
-    return ctx.createPattern(patternCanvas, 'repeat');
+  function createSprite(tex, size, color, opacity) {
+    const m = new THREE.SpriteMaterial({ map: tex, color: color, transparent: true, opacity: opacity, blending: THREE.AdditiveBlending });
+    const s = new THREE.Sprite(m);
+    s.scale.set(size, size, 1);
+    return s;
   }
 
-  function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    width = window.innerWidth;
-    height = window.innerHeight;
-
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    leftRailX = width * 0.32;
-    rightRailX = width * 0.68;
-
-    gridPattern = createGridPattern();
-
-    circuits = [];
-    particles = [];
-    floatingSymbols = [];
-    sideCircuits = [];
-    baseScrollOffset = 0;
-
-    generateInitialCircuits();
-    generateParticles();
-    generateFloatingSymbols();
-    generateSideCircuits();
-  }
-
-  function generateSideCircuits() {
-    for (let y = height + 600; y > -600; y -= height * 0.35 + Math.random() * height * 0.2) {
-      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(y, 'left'));
-      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(y + height * 0.15 + Math.random() * height * 0.1, 'right'));
-    }
-  }
-
-  function createSideCircuit(baseY, side) {
-    const depth = 0.5 + Math.random() * 0.5;
-    const startX = side === 'left' ? leftRailX : rightRailX;
-    const path = [{ x: startX, localY: 0 }];
-    let x = startX;
-    let localY = 0;
-
-    const segments = 2 + Math.floor(Math.random() * 3);
-    const direction = side === 'left' ? -1 : 1;
-
-    for (let s = 0; s < segments; s++) {
-      x += (50 + Math.random() * 100) * direction;
-      path.push({ x, localY });
-
-      if (s < segments - 1 && Math.random() > 0.4) {
-        const diagLength = 20 + Math.random() * 40;
-        x += diagLength * direction;
-        localY += diagLength * (Math.random() > 0.5 ? 1 : -1);
-        path.push({ x, localY });
+  // --- COLLISION ---
+  function checkCollision(x, y, layerId, side) {
+    const candidates = circuits.filter(c => c.layer.id === layerId && c.side === side);
+    for (let c of candidates) {
+      const cY = c.mesh.position.y;
+      if (y > cY + c.bounds.top + 50 || y + 300 < cY) continue;
+      for (let pt of c.path) {
+        if (Math.abs(pt.x - x) < CONFIG.MIN_DIST_X) return true;
       }
     }
-
-    path.push({ x: side === 'left' ? -30 : width + 30, localY });
-
-    return {
-      baseY, side, path, startX,
-      opacity: 0.08 + Math.random() * 0.12 * depth,
-      lineWidth: 0.6 + Math.random() * 0.8 * depth,
-      glowSize: 10 + Math.random() * 15 * depth,
-      depth,
-      parallaxFactor: 0.55 + depth * 0.45
-    };
+    return false;
   }
 
-  function hasHorizontalConflict(x, side) {
-    return circuits.some(c => c.side === side && c.path.some(p => Math.abs(p.x - x) < MIN_HORIZONTAL_MARGIN));
-  }
+  // --- GENERATION FOND ---
+  function createCircuitObject(spawnY, layer, side, isPreFill = false) {
+    const zs = layer.xZone[0] * width, ze = layer.xZone[1] * width;
+    let startX = null, path = null, bounds = null;
+    let isLong = false;
 
-  function findValidX(layer, side) {
-    const zoneStart = layer.xZone[0] * width;
-    const zoneEnd = layer.xZone[1] * width;
+    const longCount = circuits.filter(c => c.isLong && c.mesh.position.y > -height && c.mesh.position.y < height).length;
+    const forceLong = longCount < 1;
 
-    for (let i = 0; i < 10; i++) {
-      const x = side === 'left' 
-        ? zoneStart + Math.random() * (zoneEnd - zoneStart)
-        : width - zoneStart - Math.random() * (zoneEnd - zoneStart);
-      if (!hasHorizontalConflict(x, side)) return x;
-    }
-    return null;
-  }
+    for (let attempt = 0; attempt < 30; attempt++) {
+      let tx = side === 'left' ? zs + Math.random() * (ze - zs) : width - zs - Math.random() * (ze - zs);
 
-  function generateCircuit(bottomY, layer, side) {
-    const baseX = findValidX(layer, side);
-    if (baseX === null) return null;
+      if (!checkCollision(tx, spawnY, layer.id, side)) {
 
-    const zoneStart = layer.xZone[0] * width;
-    const zoneEnd = layer.xZone[1] * width;
-    const path = [];
-    let x = baseX;
-    let y = bottomY;
+        let tempPath = [{ x: tx, y: 0 }];
+        let curX = tx, curY = 0;
+        let validCollision = true;
 
-    path.push({ x, y });
+        isLong = forceLong || (Math.random() > 0.4);
+        const segs = isLong ? 5 + Math.floor(Math.random() * 5) : 3 + Math.floor(Math.random() * 2);
 
-    const segments = 3 + Math.floor(Math.random() * 4);
+        for (let s = 0; s < segs; s++) {
+          curY += (isLong ? 80 : 50) + Math.random() * (isLong ? 150 : 80) + (attempt * 2);
+          tempPath.push({ x: curX, y: curY });
 
-    for (let s = 0; s < segments; s++) {
-      y -= 60 + Math.random() * 120;
-      path.push({ x, y });
+          if (s < segs - 1 && Math.random() > 0.15) {
+            const dx = (20 + Math.random() * 50) * (Math.random() > 0.5 ? 1 : -1);
+            let nx = curX + dx;
+            if (side === 'left') nx = Math.max(zs + 5, Math.min(ze - 5, nx));
+            else nx = Math.max(width - ze + 5, Math.min(width - zs - 5, nx));
 
-      if (s < segments - 1 && Math.random() > 0.3) {
-        const diagLength = 15 + Math.random() * 40;
-        const diagDir = Math.random() > 0.5 ? 1 : -1;
-        let newX = x + diagLength * diagDir;
-
-        if (side === 'left') {
-          newX = Math.max(zoneStart + 5, Math.min(zoneEnd - 5, newX));
-        } else {
-          newX = Math.max(width - zoneEnd + 5, Math.min(width - zoneStart - 5, newX));
+            if (checkCollision(nx, spawnY + curY, layer.id, side)) {
+              validCollision = false; break;
+            }
+            curY += Math.abs(nx - curX); curX = nx;
+            tempPath.push({ x: curX, y: curY });
+          }
         }
 
-        if (!hasHorizontalConflict(newX, side)) {
-          y -= Math.abs(newX - x);
-          x = newX;
-          path.push({ x, y });
+        if (validCollision) {
+          curY += 40 + Math.random() * 60;
+          tempPath.push({ x: curX, y: curY });
+
+          let isUnique = true;
+          for (let c of circuits) {
+            if (Math.abs(c.bounds.top - curY) / c.bounds.top < 0.15) { isUnique = false; break; }
+          }
+
+          if (isUnique) {
+            startX = tx; path = tempPath; bounds = { top: curY, bottom: 0 };
+            break;
+          }
         }
       }
     }
 
-    y -= 40 + Math.random() * 80;
-    path.push({ x, y });
+    if (!path) return null;
 
-    const topY = Math.min(...path.map(p => p.y));
+    let finalY = spawnY;
+    if (!isPreFill && spawnY < -height / 2 + 100) {
+      finalY = -height / 2 - bounds.top - 100;
+    }
 
-    const verticalSegments = [];
+    const pts = path.map(p => new THREE.Vector3(p.x - width / 2, p.y, 0));
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({ color: CONFIG.ORANGE, transparent: true, opacity: layer.opacity, blending: THREE.AdditiveBlending });
+    const mesh = new THREE.Line(geo, mat);
+    mesh.position.set(0, finalY, 0);
+
+    const capSize = (10 + Math.random() * 6) * layer.depth;
+    // Opacité réduite pour les boules aux bouts (x1.5 au lieu de x2)
+    const sCap = createSprite(haloTex, capSize, CONFIG.ORANGE, layer.opacity * 1.5);
+    const eCap = createSprite(haloTex, capSize, CONFIG.ORANGE, layer.opacity * 1.5);
+
+    scene.add(mesh); scene.add(sCap); scene.add(eCap);
+
+    // --- ANIMATIONS ---
+    const runners = [];
+    let rectSegmentIndex = -1;
+
+    // 1. RECTANGLE
+    const vSegs = [];
     for (let i = 1; i < path.length; i++) {
-      if (Math.abs(path[i].x - path[i - 1].x) < 3) {
-        const length = Math.abs(path[i].y - path[i - 1].y);
-        if (length > 50) {
-          verticalSegments.push({
-            x: path[i].x,
-            yTop: Math.min(path[i].y, path[i - 1].y),
-            yBottom: Math.max(path[i].y, path[i - 1].y),
-            length
-          });
-        }
+      if (Math.abs(path[i].x - path[i - 1].x) < 2 && Math.abs(path[i].y - path[i - 1].y) > 120) {
+        vSegs.push({
+          index: i - 1,
+          x: path[i].x, ymin: path[i - 1].y, ymax: path[i].y, len: path[i].y - path[i - 1].y
+        });
       }
     }
+    if (vSegs.length > 0 && Math.random() > 0.3) {
+      const s = vSegs[Math.floor(Math.random() * vSegs.length)];
+      rectSegmentIndex = s.index;
 
-    let runner = null;
-    if (verticalSegments.length > 0 && Math.random() > 0.6) {
-      const segment = verticalSegments[Math.floor(Math.random() * verticalSegments.length)];
-      runner = {
-        segment,
-        centerY: (segment.yTop + segment.yBottom) / 2,
-        oscillationRange: Math.min(segment.length * 0.18, 18 + Math.random() * 18),
-        oscillationSpeed: 0.012 + Math.random() * 0.018,
-        oscillationPhase: Math.random() * Math.PI * 2,
-        streakLength: 12 + Math.random() * 28,
-        brightness: 0.7 + Math.random() * 0.3
-      };
-    }
+      const rLen = 30 + Math.random() * 40;
+      const rW = 3 * layer.depth;
+      const rMesh = createSprite(runnerTex, 1, CONFIG.RUNNER_COLOR, 0.9);
+      rMesh.scale.set(rW, rLen, 1);
+      rMesh.position.set(0, -99999, 0); rMesh.visible = false;
+      scene.add(rMesh);
 
-    return {
-      path, side, layer, bottomY, topY, runner,
-      topPulsePhase: Math.random() * Math.PI * 2,
-      bottomPulsePhase: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.025 + Math.random() * 0.02
-    };
-  }
+      const safeAmp = Math.max(0, (s.len - rLen) / 2 - 25);
 
-  function canPlaceCircuit(bottomY, layer, side) {
-    return !circuits.some(c => c.layer === layer && c.side === side && Math.abs(c.bottomY - bottomY) < 180);
-  }
-
-  function generateInitialCircuits() {
-    depthLayers.forEach(layer => {
-      for (let y = height + 700; y > -height; y -= 200 + Math.random() * 120) {
-        if (Math.random() > 0.25 && canPlaceCircuit(y, layer, 'left')) {
-          const circuit = generateCircuit(y, layer, 'left');
-          if (circuit) circuits.push(circuit);
-        }
-        if (Math.random() > 0.25 && canPlaceCircuit(y + 100, layer, 'right')) {
-          const circuit = generateCircuit(y + 100 + Math.random() * 60, layer, 'right');
-          if (circuit) circuits.push(circuit);
-        }
-      }
-    });
-  }
-
-  function generateParticles() {
-    for (let i = 0; i < 150; i++) {
-      particles.push(createParticle(Math.random() * (height + 800) - 200));
-    }
-  }
-
-  function createParticle(baseY) {
-    const depth = 0.2 + Math.random() * 0.8;
-    const side = Math.random() > 0.5;
-    const xRange = width * 0.45;
-    return {
-      x: side ? (20 + Math.random() * xRange) : (width - 20 - Math.random() * xRange),
-      baseY,
-      size: 0.3 + Math.random() * 1.2 * depth,
-      opacity: 0.04 + Math.random() * 0.12 * depth,
-      pulse: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.01 + Math.random() * 0.02,
-      depth,
-      parallaxFactor: 0.3 + depth * 0.7
-    };
-  }
-
-  function generateFloatingSymbols() {
-    for (let i = 0; i < 40; i++) {
-      floatingSymbols.push(createFloatingSymbol(Math.random() * (height + 800) - 200));
-    }
-  }
-
-  function createFloatingSymbol(baseY) {
-    const depth = 0.15 + Math.random() * 0.85;
-    const side = Math.random() > 0.5;
-    const xRange = width * 0.45;
-    const baseSize = 3 + Math.random() * 15;
-    const size = baseSize * (0.4 + depth * 0.8);
-
-    return {
-      x: side ? (30 + Math.random() * xRange) : (width - 30 - Math.random() * xRange),
-      baseY,
-      type: Math.floor(Math.random() * 5),
-      size,
-      opacity: 0.08 + Math.random() * 0.35 * depth,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.003,
-      pulse: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.01 + Math.random() * 0.02,
-      depth,
-      parallaxFactor: 0.15 + depth * 0.85,
-      glowSize: size * (1.5 + Math.random() * 1.5)
-    };
-  }
-
-  function update() {
-    baseScrollOffset += baseScrollSpeed;
-
-    circuits.forEach(c => {
-      c.topPulsePhase += c.pulseSpeed;
-      c.bottomPulsePhase += c.pulseSpeed * 0.85;
-      if (c.runner) c.runner.oscillationPhase += c.runner.oscillationSpeed;
-    });
-
-    particles.forEach(p => p.pulse += p.pulseSpeed);
-    floatingSymbols.forEach(s => {
-      s.rotation += s.rotationSpeed;
-      s.pulse += s.pulseSpeed;
-    });
-
-    circuits = circuits.filter(c => {
-      const screenBottomY = c.bottomY - baseScrollOffset * c.layer.scrollFactor;
-      return screenBottomY > -50;
-    });
-
-    depthLayers.forEach(layer => {
-      const layerCircuits = circuits.filter(c => c.layer === layer);
-      const layerScroll = baseScrollOffset * layer.scrollFactor;
-      const maxBottomY = layerCircuits.length > 0 ? Math.max(...layerCircuits.map(c => c.bottomY)) : layerScroll + height;
-
-      if (maxBottomY < layerScroll + height + 500) {
-        const newBottomY = maxBottomY + 180 + Math.random() * 100;
-        if (Math.random() > 0.3 && canPlaceCircuit(newBottomY, layer, 'left')) {
-          const circuit = generateCircuit(newBottomY, layer, 'left');
-          if (circuit) circuits.push(circuit);
-        }
-        if (Math.random() > 0.3 && canPlaceCircuit(newBottomY + 80, layer, 'right')) {
-          const circuit = generateCircuit(newBottomY + 80 + Math.random() * 60, layer, 'right');
-          if (circuit) circuits.push(circuit);
-        }
-      }
-    });
-
-    sideCircuits = sideCircuits.filter(c => c.baseY - baseScrollOffset * c.parallaxFactor > -150);
-
-    const maxSideY = sideCircuits.length > 0 ? Math.max(...sideCircuits.map(c => c.baseY)) : baseScrollOffset + height;
-    if (maxSideY < baseScrollOffset + height + 400) {
-      const newY = maxSideY + height * 0.35 + Math.random() * height * 0.2;
-      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(newY, 'left'));
-      if (Math.random() > 0.3) sideCircuits.push(createSideCircuit(newY + height * 0.15 + Math.random() * height * 0.1, 'right'));
-    }
-
-    particles = particles.filter(p => p.baseY - baseScrollOffset * p.parallaxFactor > -50);
-    while (particles.length < 150) {
-      const maxBaseY = particles.length > 0 ? Math.max(...particles.map(p => p.baseY)) : baseScrollOffset + height;
-      particles.push(createParticle(maxBaseY + 30 + Math.random() * 60));
-    }
-
-    floatingSymbols = floatingSymbols.filter(s => s.baseY - baseScrollOffset * s.parallaxFactor > -80);
-    while (floatingSymbols.length < 40) {
-      const maxBaseY = floatingSymbols.length > 0 ? Math.max(...floatingSymbols.map(s => s.baseY)) : baseScrollOffset + height;
-      floatingSymbols.push(createFloatingSymbol(maxBaseY + 40 + Math.random() * 100));
-    }
-  }
-
-  function render() {
-    const { r, g, b } = ORANGE;
-
-    ctx.fillStyle = '#050508';
-    ctx.fillRect(0, 0, width, height);
-
-    if (gridPattern) {
-      ctx.fillStyle = gridPattern;
-      ctx.fillRect(0, 0, width, height);
-    }
-
-    const bgGradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * 0.8);
-    bgGradient.addColorStop(0, 'rgba(5, 5, 10, 0.9)');
-    bgGradient.addColorStop(0.5, 'rgba(8, 6, 12, 0.5)');
-    bgGradient.addColorStop(0.8, 'rgba(15, 8, 5, 0.3)');
-    bgGradient.addColorStop(1, 'rgba(20, 10, 5, 0.4)');
-    ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-    for (let y = 0; y < height; y += 3) ctx.fillRect(0, y, width, 1);
-
-    const vignette = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) * 0.7);
-    vignette.addColorStop(0, 'rgba(0,0,0,0)');
-    vignette.addColorStop(0.7, 'rgba(0,0,0,0.2)');
-    vignette.addColorStop(1, 'rgba(0,0,0,0.6)');
-    ctx.fillStyle = vignette;
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    // Particles
-    particles.forEach(p => {
-      const screenY = p.baseY - baseScrollOffset * p.parallaxFactor;
-      if (screenY < -20 || screenY > height + 20) return;
-
-      const pulse = Math.sin(p.pulse) * 0.4 + 0.6;
-      const alpha = p.opacity * pulse;
-
-      const gradient = ctx.createRadialGradient(p.x, screenY, 0, p.x, screenY, p.size * 4);
-      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha})`);
-      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`);
-      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(p.x, screenY, p.size * 4, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Floating symbols
-    [...floatingSymbols].sort((a, b) => a.depth - b.depth).forEach(symbol => {
-      const screenY = symbol.baseY - baseScrollOffset * symbol.parallaxFactor;
-      if (screenY < -60 || screenY > height + 60) return;
-
-      const { x, type, size, opacity, rotation, pulse, glowSize, depth } = symbol;
-      const pulseVal = Math.sin(pulse) * 0.35 + 0.65;
-      const alpha = opacity * pulseVal;
-
-      ctx.save();
-      ctx.translate(x, screenY);
-      ctx.rotate(rotation);
-
-      const glowGradient = ctx.createRadialGradient(0, 0, size * 0.2, 0, 0, glowSize);
-      glowGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.8})`);
-      glowGradient.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`);
-      glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = glowGradient;
-      ctx.beginPath();
-      ctx.arc(0, 0, glowSize, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-      ctx.lineWidth = 0.5 + depth * 0.3;
-
-      ctx.beginPath();
-      if (type === 0) {
-        ctx.arc(0, 0, size, 0, Math.PI * 2);
-        ctx.stroke();
-      } else if (type === 1) {
-        ctx.arc(0, 0, size, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        ctx.beginPath();
-        ctx.arc(0, 0, size * 0.15, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (type === 2) {
-        ctx.arc(0, 0, size, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(0, 0, size * 0.55, 0, Math.PI * 2);
-        ctx.stroke();
-      } else if (type === 3) {
-        ctx.arc(0, 0, size, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(0, 0, size * 0.6, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        ctx.beginPath();
-        ctx.arc(0, 0, size * 0.2, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.moveTo(0, -size);
-        ctx.lineTo(size * 0.7, 0);
-        ctx.lineTo(0, size);
-        ctx.lineTo(-size * 0.7, 0);
-        ctx.closePath();
-        ctx.stroke();
-      }
-      ctx.restore();
-    });
-
-    // Back wall circuits
-    [...circuits].sort((a, b) => a.layer.depth - b.layer.depth).forEach(circuit => {
-      const { path, layer, runner, topPulsePhase, bottomPulsePhase, topY, bottomY } = circuit;
-      const { opacity, lineWidth, glowSize, depth, scrollFactor } = layer;
-      const layerScroll = baseScrollOffset * scrollFactor;
-
-      const screenPath = path.map(p => ({ x: p.x, y: p.y - layerScroll }));
-      const screenTopY = topY - layerScroll;
-      const screenBottomY = bottomY - layerScroll;
-
-      if (screenBottomY < -20 || screenTopY > height + 20) return;
-
-      ctx.save();
-      ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
-      ctx.shadowBlur = glowSize;
-      ctx.beginPath();
-      ctx.moveTo(screenPath[0].x, screenPath[0].y);
-      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`;
-      ctx.lineWidth = lineWidth * 2.5;
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.save();
-      ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.8)`;
-      ctx.shadowBlur = glowSize * 0.5;
-      ctx.beginPath();
-      ctx.moveTo(screenPath[0].x, screenPath[0].y);
-      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
-      ctx.restore();
-
-      // Endpoint halos
-      [screenPath[0], screenPath[screenPath.length - 1]].forEach((point, idx) => {
-        if (point.y < -40 || point.y > height + 40) return;
-        const pulse = Math.sin(idx === 0 ? bottomPulsePhase : topPulsePhase) * 0.3 + 0.7;
-        const haloSize = (4 + glowSize * 0.25) * depth;
-
-        const glow = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, haloSize * 2);
-        glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 1.5 * pulse})`);
-        glow.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${opacity * 0.5 * pulse})`);
-        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, haloSize * 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 2 * pulse})`;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 1.5 * depth, 0, Math.PI * 2);
-        ctx.fill();
+      runners.push({
+        type: 'rect',
+        seg: s, rect: rMesh,
+        localCy: (s.ymin + s.ymax) / 2,
+        amp: safeAmp,
+        ph: Math.random() * 10,
+        spd: 0.02 + Math.random() * 0.02
       });
+    }
 
-      // Runner
-      if (runner) {
-        const { segment, centerY, oscillationRange, oscillationPhase, streakLength, brightness } = runner;
-        const runnerY = centerY + Math.sin(oscillationPhase) * oscillationRange;
-        const screenRunnerY = runnerY - layerScroll;
-        const x = segment.x;
-
-        if (segment.yBottom - layerScroll > 0 && segment.yTop - layerScroll < height && screenRunnerY > -30 && screenRunnerY < height + 30) {
-          const halfStreak = streakLength / 2;
-
-          ctx.save();
-          ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
-          ctx.shadowBlur = glowSize * 2;
-          ctx.beginPath();
-          ctx.moveTo(x, screenRunnerY - halfStreak);
-          ctx.lineTo(x, screenRunnerY + halfStreak);
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${brightness * 0.3})`;
-          ctx.lineWidth = 6 * depth;
-          ctx.stroke();
-          ctx.restore();
-
-          ctx.save();
-          ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
-          ctx.shadowBlur = glowSize;
-          ctx.beginPath();
-          ctx.moveTo(x, screenRunnerY - halfStreak);
-          ctx.lineTo(x, screenRunnerY + halfStreak);
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${brightness * 0.6})`;
-          ctx.lineWidth = 3 * depth;
-          ctx.stroke();
-          ctx.restore();
-
-          ctx.beginPath();
-          ctx.moveTo(x, screenRunnerY - halfStreak);
-          ctx.lineTo(x, screenRunnerY + halfStreak);
-          ctx.strokeStyle = `rgba(255, 220, 160, ${brightness})`;
-          ctx.lineWidth = 0.8 * depth;
-          ctx.stroke();
-        }
+    // 2. SPARK (Exclusion)
+    const availableSegments = [];
+    for (let i = 0; i < path.length - 1; i++) {
+      if (i !== rectSegmentIndex) {
+        availableSegments.push(i);
       }
-    });
+    }
 
-    // Side wall circuits
-    const vanishingPointY = height * 0.5;
+    if (availableSegments.length > 0) {
+      const segIdx = availableSegments[Math.floor(Math.random() * availableSegments.length)];
+      const sp1 = path[segIdx];
+      const sp2 = path[segIdx + 1];
 
-    sideCircuits.forEach(circuit => {
-      const screenBaseY = circuit.baseY - baseScrollOffset * circuit.parallaxFactor;
-      if (screenBaseY < -150 || screenBaseY > height + 150) return;
+      const sparkSize = 12 * layer.depth;
+      const sparkMesh = createSprite(sparkTex, 1, CONFIG.SPARK_COLOR, 1.0);
+      sparkMesh.scale.set(sparkSize, sparkSize, 1);
+      sparkMesh.position.set(0, -99999, 0); sparkMesh.visible = false;
+      scene.add(sparkMesh);
 
-      const { path, opacity, lineWidth, glowSize, startX } = circuit;
-      const distFromCenter = screenBaseY - vanishingPointY;
-      const perspectiveFactor = (distFromCenter / (height * 0.5)) * 0.4;
+      runners.push({
+        type: 'spark',
+        rect: sparkMesh,
+        p1: sp1,
+        p2: sp2,
+        t: Math.random(),
+        spd: 0.02 + Math.random() * 0.03
+      });
+    }
 
-      const screenPath = path.map(p => ({
-        x: p.x,
-        y: screenBaseY + p.localY + Math.abs(p.x - startX) * perspectiveFactor
-      }));
-
-      const minY = Math.min(...screenPath.map(p => p.y));
-      const maxY = Math.max(...screenPath.map(p => p.y));
-      if (maxY < -50 || minY > height + 50) return;
-
-      ctx.save();
-      ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
-      ctx.shadowBlur = glowSize;
-      ctx.beginPath();
-      ctx.moveTo(screenPath[0].x, screenPath[0].y);
-      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 0.5})`;
-      ctx.lineWidth = lineWidth * 3;
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.beginPath();
-      ctx.moveTo(screenPath[0].x, screenPath[0].y);
-      for (let i = 1; i < screenPath.length; i++) ctx.lineTo(screenPath[i].x, screenPath[i].y);
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
-
-      const startPoint = screenPath[0];
-      if (startPoint.y > -30 && startPoint.y < height + 30) {
-        const haloSize = 4 + glowSize * 0.3;
-        const startGlow = ctx.createRadialGradient(startPoint.x, startPoint.y, 0, startPoint.x, startPoint.y, haloSize * 2);
-        startGlow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 2})`);
-        startGlow.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`);
-        startGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = startGlow;
-        ctx.beginPath();
-        ctx.arc(startPoint.x, startPoint.y, haloSize * 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
+    return { mesh, sCap, eCap, runners, path, layer, side, bounds, isLong, pulse: Math.random() * 10 };
   }
+
+  function createSideCircuit(spawnY, side) {
+    const sx = side === 'left' ? leftRailX : rightRailX;
+    const dir = side === 'left' ? -1 : 1;
+    let path = [{ x: 0, y: 0 }];
+    let cx = 0, cy = 0;
+    const segs = 2 + Math.floor(Math.random() * 2);
+    for (let s = 0; s < segs; s++) {
+      cx += (80 + Math.random() * 150) * dir; path.push({ x: cx, y: cy });
+      if (s < segs - 1 && Math.random() > 0.4) {
+        const diag = 30 + Math.random() * 50; cx += diag * dir; cy += diag * (Math.random() > 0.5 ? 1 : -1); path.push({ x: cx, y: cy });
+      }
+    }
+    path.push({ x: side === 'left' ? -800 : width + 800, y: cy });
+    const pts = new Float32Array(20 * 3);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pts, 3));
+    geo.setDrawRange(0, path.length);
+    const mat = new THREE.LineBasicMaterial({ color: CONFIG.ORANGE, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending });
+    const mesh = new THREE.Line(geo, mat);
+    mesh.position.set(0, spawnY, 0);
+    scene.add(mesh);
+    const sCap = createSprite(haloTex, 16, CONFIG.ORANGE, 0.7); scene.add(sCap); // Opacité réduite
+    const eCap = createSprite(haloTex, 16, CONFIG.ORANGE, 0.5); scene.add(eCap); // Opacité réduite
+    return { mesh, sCap, eCap, startX: sx, localPath: path, side };
+  }
+
+  function createParticle() {
+    const depth = 0.3 + Math.random() * 0.7;
+    const side = Math.random() > 0.5;
+    const margin = width * 0.1;
+    const x = side ? Math.random() * (leftRailX - margin) : rightRailX + margin + Math.random() * (width - rightRailX - margin);
+    const tex = symbolsTex[Math.floor(Math.random() * symbolsTex.length)];
+    const size = (16 + Math.random() * 24) * (0.6 + depth * 0.4);
+    const mesh = createSprite(tex, size, CONFIG.ORANGE, 0);
+    mesh.position.set(x - width / 2, (Math.random() * height * 3) - height * 1.5, Math.random() * 80);
+    scene.add(mesh);
+    return { mesh, depth, speedOffset: Math.random() * 0.2, rotSpeed: (Math.random() - 0.5) * 0.03, pulse: Math.random() * 10 };
+  }
+
+  function init() {
+    width = window.innerWidth; height = window.innerHeight;
+    leftRailX = width * 0.32; rightRailX = width * 0.68;
+    renderer.setSize(width, height);
+    composer.setSize(width, height);
+    camera.left = width / -2; camera.right = width / 2;
+    camera.top = height / 2; camera.bottom = height / -2;
+    camera.updateProjectionMatrix();
+
+    while (scene.children.length > 0) scene.remove(scene.children[0]);
+
+    const bgG = new THREE.PlaneGeometry(width, height);
+    const bgM = new THREE.MeshBasicMaterial({ map: bgTex, depthTest: false });
+    const bgMesh = new THREE.Mesh(bgG, bgM);
+    bgMesh.position.z = -900; scene.add(bgMesh);
+
+    circuits = []; sideCircuits = []; particles = [];
+
+    for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) particles.push(createParticle());
+
+    depthLayers.forEach(layer => {
+      let simY = -height;
+      while (simY < height * 1.5) {
+        if (Math.random() > 0.3) {
+          const c = createCircuitObject(simY, layer, 'left', true);
+          if (c) circuits.push(c);
+        }
+        if (Math.random() > 0.3) {
+          const c = createCircuitObject(simY + 50, layer, 'right', true);
+          if (c) circuits.push(c);
+        }
+        simY += 150;
+      }
+    });
+
+    let sideY = -height;
+    while (sideY < height * 1.5) {
+      if (Math.random() > 0.4) sideCircuits.push(createSideCircuit(sideY, 'left'));
+      if (Math.random() > 0.4) sideCircuits.push(createSideCircuit(sideY + 150, 'right'));
+      
+      // ESPACEMENT AUGMENTÉ POUR RÉDUIRE LE NOMBRE DE LIGNES (800 au lieu de 300)
+      sideY += CONFIG.SIDE_SPACING;
+    }
+
+    const loader = document.getElementById('loading');
+    if (loader) loader.style.display = 'none';
+  }
+
+  window.addEventListener('resize', init);
+  init();
 
   function animate() {
-    update();
-    render();
-    animationId = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
+    const speed = CONFIG.GLOBAL_SPEED;
+
+    for (let i = circuits.length - 1; i >= 0; i--) {
+      const c = circuits[i];
+      c.mesh.position.y += speed;
+
+      if (c.mesh.position.y > height / 2 + 200) {
+        scene.remove(c.mesh); scene.remove(c.sCap); scene.remove(c.eCap);
+        if (c.runners) c.runners.forEach(r => scene.remove(r.rect));
+        circuits.splice(i, 1);
+        continue;
+      }
+
+      c.pulse += 0.05;
+      const p = 1 + Math.sin(c.pulse) * 0.2;
+      c.sCap.position.set(c.path[0].x - width / 2, c.mesh.position.y + c.path[0].y, 1);
+      c.sCap.scale.setScalar(c.sCap.scale.x * 0.9 + ((10 * c.layer.depth) * p) * 0.1);
+      const endPt = c.path[c.path.length - 1];
+      c.eCap.position.set(endPt.x - width / 2, c.mesh.position.y + endPt.y, 1);
+
+      if (c.runners) {
+        c.runners.forEach(runner => {
+          if (runner.type === 'rect') {
+            runner.ph += runner.spd;
+            const osc = Math.sin(runner.ph) * runner.amp;
+            const localY = runner.localCy + osc;
+            runner.rect.position.set(runner.seg.x - width / 2, c.mesh.position.y + localY, 2);
+            if (!runner.rect.visible) runner.rect.visible = true;
+          }
+          else if (runner.type === 'spark') {
+            runner.t += runner.spd;
+            const sineNorm = (Math.sin(runner.t) + 1) / 2;
+            const progress = 0.15 + sineNorm * 0.70;
+            const lx = runner.p1.x + (runner.p2.x - runner.p1.x) * progress;
+            const ly = runner.p1.y + (runner.p2.y - runner.p1.y) * progress;
+            runner.rect.position.set(lx - width / 2, c.mesh.position.y + ly, 3);
+            if (!runner.rect.visible) runner.rect.visible = true;
+          }
+        });
+      }
+    }
+
+    depthLayers.forEach(layer => {
+      const cs = circuits.filter(c => c.layer.id === layer.id);
+      const lefts = cs.filter(c => c.side === 'left');
+      let lowestY = lefts.length > 0 ? Math.min(...lefts.map(c => c.mesh.position.y)) : height;
+
+      if (lowestY > -height / 2) {
+        if (lefts.length < CONFIG.MAX_LINES_PER_SIDE) {
+          const c = createCircuitObject(-height / 2 - 200, layer, 'left', false);
+          if (c) circuits.push(c);
+        }
+      }
+
+      const rights = cs.filter(c => c.side === 'right');
+      let lowestYR = rights.length > 0 ? Math.min(...rights.map(c => c.mesh.position.y)) : height;
+      if (lowestYR > -height / 2) {
+        if (rights.length < CONFIG.MAX_LINES_PER_SIDE) {
+          const c = createCircuitObject(-height / 2 - 200, layer, 'right', false);
+          if (c) circuits.push(c);
+        }
+      }
+    });
+
+    for (let i = sideCircuits.length - 1; i >= 0; i--) {
+      const c = sideCircuits[i];
+      c.mesh.position.y += speed;
+      if (c.mesh.position.y > height / 2 + 200) {
+        const minSideY = Math.min(...sideCircuits.map(s => s.mesh.position.y));
+        // LOOP AVEC ESPACEMENT AUGMENTÉ
+        const targetY = (minSideY < -height) ? minSideY - CONFIG.SIDE_SPACING : -height / 2 - 300;
+        c.mesh.position.y = targetY;
+      }
+      const currentY = c.mesh.position.y;
+      const pFactor = (currentY / (height * 0.5)) * 0.4;
+      const pos = c.mesh.geometry.attributes.position.array;
+      let idx = 0, lx = 0, ly = 0;
+      for (let k = 0; k < c.localPath.length; k++) {
+        const pt = c.localPath[k];
+        const warpY = pt.y + (Math.abs(pt.x) * pFactor);
+        pos[idx++] = (c.startX + pt.x) - width / 2;
+        pos[idx++] = warpY;
+        pos[idx++] = 0;
+        if (Math.abs(pt.x) < 600) { lx = (c.startX + pt.x) - width / 2; ly = currentY + warpY; }
+      }
+      c.mesh.geometry.attributes.position.needsUpdate = true;
+      c.sCap.position.set(c.startX - width / 2, currentY, 1);
+      c.eCap.position.set(lx, ly, 1);
+    }
+
+    particles.forEach(p => {
+      p.mesh.position.y += speed + p.speedOffset;
+      if (p.mesh.position.y > height / 2 + 200) {
+        p.mesh.position.y = -height / 2 - 400;
+        const side = Math.random() > 0.5;
+        const margin = width * 0.1;
+        const nx = side ? Math.random() * (leftRailX - margin) : rightRailX + margin + Math.random() * (width - rightRailX - margin);
+        p.mesh.position.x = nx - width / 2;
+        p.speedOffset = Math.random() * 0.2;
+      }
+      p.pulse += 0.02;
+      p.mesh.material.opacity = (0.5 + Math.sin(p.pulse) * 0.5) * 0.5 * p.depth;
+      p.mesh.material.rotation += p.rotSpeed;
+    });
+
+    composer.render();
   }
 
-  resize();
   animate();
-  window.addEventListener('resize', resize);
-})();
 </script>
