@@ -225,13 +225,36 @@
 }
 
 /* ==========================================================================
-   Header Actions (Login / Subscribe)
+   Header Actions (Search / Login / Subscribe)
    ========================================================================== */
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* Search Button */
+.btn-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-search:hover {
+  color: var(--color-orange);
+  text-shadow: var(--glow-orange);
+}
+
+.btn-search svg {
   flex-shrink: 0;
 }
 
@@ -427,7 +450,59 @@
   gap: var(--spacing-sm);
 }
 
+/* Mobile Search Button */
+.btn-search-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-search-mobile:hover {
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
 .mobile-nav-actions .btn-primary {
   text-align: center;
   padding: var(--spacing-md);
+}
+
+/* ==========================================================================
+    Blinking Chevron & Logo Effects
+   ========================================================================== */
+
+.logo-bracket--blink {
+    animation: blinkBracket 1.5s step-end infinite;
+}
+
+@keyframes blinkBracket {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Blinking nav chevron */
+.nav-chevron {
+    animation: blinkChevron 2s ease-in-out infinite;
+}
+
+@keyframes blinkChevron {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* Dropdown chevron rotation still works */
+.nav-item.has-dropdown:hover .nav-chevron {
+    transform: rotate(180deg);
+    animation: none;
+    opacity: 1;
 }

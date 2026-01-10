@@ -590,7 +590,7 @@ body.page-template-page-about .circuit-background {
     border-radius: var(--radius-md);
     padding: 20px 15px;
     text-align: center;
-    transition: opacity var(--transition-slow), transform var(--transition-slow);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
     opacity: 0;
     transform: translateY(20px);
     width: 100%;

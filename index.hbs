@@ -1,185 +1,289 @@
-{{!< default}} <div class="home-content">
+{{!< default}}
 
-  <!-- Hero Banner with Background Image -->
-  <section class="hero-banner">
-    <div class="hero-banner-overlay"></div>
-    <div class="hero-banner-content">
-      <span class="hero-banner-label">BIENVENUE SUR</span>
-      <h1>Codermug</h1>
-      <p>{{@site.description}}</p>
+{{!-- Navigation dots --}}
+<nav class="home-nav-dots">
+    <div class="home-nav-dot active" data-nav="0" data-label="Accueil"></div>
+    <div class="home-nav-dot" data-nav="1" data-label="Featured"></div>
+    <div class="home-nav-dot" data-nav="2" data-label="Séries"></div>
+    <div class="home-nav-dot" data-nav="3" data-label="Toolbox"></div>
+    <div class="home-nav-dot" data-nav="4" data-label="Learning Path"></div>
+    <div class="home-nav-dot" data-nav="5" data-label="Articles"></div>
+    <div class="home-nav-dot" data-nav="6" data-label="Contact"></div>
+</nav>
+
+{{!-- Sections wrapper --}}
+<div class="home-wrapper">
+    <div class="home-track">
+
+        {{!-- SECTION 0: HERO --}}
+        <section class="home-section home-hero" data-section="0">
+            <div class="home-hero-content">
+                <div class="home-hero-prompt">
+                    <span class="prompt-chevron">&gt;</span> Initializing knowledge transfer
+                </div>
+                
+                <h1 class="home-hero-title">
+                    <span class="title-fill">Coder</span><span class="title-outline">mug</span>
+                    <span class="title-glitch" aria-hidden="true">Codermug</span>
+                </h1>
+
+                <div class="home-hero-desc">
+                    <p>
+                        <strong>Deep dives techniques</strong>, retours d'expérience et architectures
+                        pour les ingénieurs DevOps et SRE qui veulent <em>comprendre</em>,
+                        pas juste exécuter.
+                    </p>
+                </div>
+
+                <div class="home-hero-cta">
+                    <a href="#" class="home-cta-btn home-cta-btn--primary" data-goto="1">Explorer</a>
+                    <a href="{{@site.url}}/about/" class="home-cta-btn home-cta-btn--ghost">À propos</a>
+                </div>
+            </div>
+
+            <div class="home-scroll-indicator">
+                <span class="scroll-text">Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        {{!-- SECTION 1: FEATURED ARTICLES --}}
+        <section class="home-section home-featured" data-section="1">
+            <div class="home-section-container">
+                <div class="home-section-header anim-item">
+                    <div>
+                        <span class="home-section-label">En vedette</span>
+                        <h2 class="home-section-title">Articles Featured</h2>
+                    </div>
+                    <a href="{{@site.url}}" class="home-section-link">
+                        Tous les articles
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+
+                <div class="home-featured-grid">
+                    {{!-- Use native posts context with limit --}}
+                    {{#foreach posts limit="3"}}
+                    <a href="{{url}}" class="home-featured-card anim-item {{#if @first}}home-featured-card--primary{{/if}}">
+                        <div class="featured-card-header">
+                            {{#if primary_tag}}
+                            <span class="featured-card-icon" data-tag="{{primary_tag.slug}}">📄</span>
+                            <span class="featured-card-series">{{primary_tag.name}}</span>
+                            {{else}}
+                            <span class="featured-card-icon">📄</span>
+                            <span class="featured-card-series">Article</span>
+                            {{/if}}
+                        </div>
+                        
+                        <div class="featured-card-body">
+                            <h3 class="featured-card-title">{{title}}</h3>
+                            {{#if @first}}
+                            <p class="featured-card-excerpt">{{excerpt words="25"}}</p>
+                            {{/if}}
+                        </div>
+                        
+                        <div class="featured-card-footer">
+                            <div class="featured-card-meta">
+                                <span>{{date format="D MMM YYYY"}}</span>
+                                <span>{{reading_time}} min</span>
+                            </div>
+                            <div class="featured-card-arrow">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                    </a>
+                    {{/foreach}}
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 2: SÉRIES --}}
+        <section class="home-section home-series" data-section="2">
+            <div class="home-section-container home-section-container--narrow">
+                <div class="home-series-header anim-item">
+                    <span class="home-section-label">Collections</span>
+                    <h2 class="home-series-title">// SÉRIES D'ARTICLES</h2>
+                    <p class="home-series-intro">
+                        Des séries complètes pour approfondir un sujet technique de A à Z.
+                        Chaque série est pensée comme un parcours progressif.
+                    </p>
+                </div>
+
+                <div class="home-series-grid">
+                    <a href="{{@site.url}}/tag/k8s-deep-dive/" class="home-series-card anim-item">
+                        <div class="series-card-icon">☸️</div>
+                        <h3 class="series-card-title">Kubernetes Deep Dive</h3>
+                        <p class="series-card-desc">Plongée dans les internals de K8s : API Server, Scheduler, Controllers, Networking...</p>
+                        <div class="series-card-count">32 articles • En cours</div>
+                    </a>
+
+                    <a href="{{@site.url}}/tag/openstack/" class="home-series-card anim-item">
+                        <div class="series-card-icon">☁️</div>
+                        <h3 class="series-card-title">OpenStack Internals</h3>
+                        <p class="series-card-desc">Comprendre le cloud privé : Nova, Neutron, Cinder et l'architecture sous-jacente.</p>
+                        <div class="series-card-count">À venir</div>
+                    </a>
+
+                    <a href="{{@site.url}}/note-de-version/" class="home-series-card anim-item">
+                        <div class="series-card-icon">📝</div>
+                        <h3 class="series-card-title">Notes de Version</h3>
+                        <p class="series-card-desc">Décryptage des releases majeures : ce qui change vraiment et l'impact sur vos clusters.</p>
+                        <div class="series-card-count">8 articles</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 3: TOOLBOX --}}
+        <section class="home-section home-toolbox" data-section="3">
+            <div class="home-section-container home-section-container--narrow">
+                <div class="home-toolbox-content">
+                    <div class="home-toolbox-icon anim-item">🧰</div>
+                    
+                    <h2 class="home-toolbox-title anim-item">// LA BOÎTE À OUTILS</h2>
+                    
+                    <p class="home-toolbox-desc anim-item">
+                        Avant de plonger dans Kubernetes ou le chaos engineering, il faut maîtriser 
+                        les <strong>fondamentaux</strong>. Cette section regroupe des articles qui expliquent 
+                        clairement un concept essentiel — le genre de choses qu'on suppose souvent acquises 
+                        mais qu'on n'a jamais vraiment pris le temps de comprendre en profondeur.
+                    </p>
+                    
+                    <p class="home-toolbox-desc anim-item">
+                        Comment fonctionne vraiment <strong>TCP/IP</strong> ? Qu'est-ce qu'un <strong>load balancer</strong> 
+                        fait concrètement ? Comment un <strong>certificat TLS</strong> établit la confiance ? 
+                        Chaque article décortique un concept pour que vous puissiez enfin dire 
+                        "je comprends" au lieu de "ça marche".
+                    </p>
+
+                    <div class="home-toolbox-examples anim-item">
+                        <span class="toolbox-tag">TCP/IP</span>
+                        <span class="toolbox-tag">Load Balancing</span>
+                        <span class="toolbox-tag">Certificats TLS</span>
+                        <span class="toolbox-tag">DNS</span>
+                        <span class="toolbox-tag">Firewalls</span>
+                        <span class="toolbox-tag">Containers</span>
+                        <span class="toolbox-tag">Observabilité</span>
+                        <span class="toolbox-tag">CI/CD</span>
+                    </div>
+
+                    <a href="{{@site.url}}/toolbox/" class="home-toolbox-cta anim-item">
+                        Voir la Toolbox
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 4: LEARNING PATH --}}
+        <section class="home-section home-learning" data-section="4">
+            <div class="home-section-container home-section-container--narrow">
+                <div class="home-learning-content">
+                    <div class="home-learning-badge anim-item">
+                        <span class="badge-icon">🚧</span> Coming Soon
+                    </div>
+                    
+                    <h2 class="home-learning-title anim-item">
+                        <span class="highlight">Learning</span> Path
+                    </h2>
+                    
+                    <p class="home-learning-desc anim-item">
+                        Une suite d'articles de formation structurée pour devenir un ingénieur 
+                        DevOps/SRE compétent. Du débutant au niveau expert, étape par étape.
+                    </p>
+
+                    <div class="home-learning-features anim-item">
+                        <span class="learning-feature">Parcours progressif</span>
+                        <span class="learning-feature">Exercices pratiques</span>
+                        <span class="learning-feature">Projets réels</span>
+                    </div>
+
+                    <div class="home-learning-info anim-item">
+                        <div class="learning-info-item">
+                            <span class="info-icon">📅</span>
+                            <span>Premières formations : <strong>Automne 2026</strong></span>
+                        </div>
+                        <div class="learning-info-item">
+                            <span class="info-icon">☕</span>
+                            <span>Cours libres — Exercices : <strong>2€/mois</strong> (pour financer l'hébergement)</span>
+                        </div>
+                    </div>
+
+                    <form class="home-notify-form anim-item" onsubmit="event.preventDefault()">
+                        <input type="email" class="notify-input" placeholder="Votre email pour être notifié">
+                        <button type="submit" class="home-cta-btn home-cta-btn--primary">Notifier</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 5: ARTICLES LIST --}}
+        <section class="home-section home-articles" data-section="5">
+            <div class="home-section-container">
+                <div class="home-articles-header anim-item">
+                    <div>
+                        <span class="home-section-label">Récents</span>
+                        <h2 class="home-section-title">Tous les articles</h2>
+                    </div>
+                    <div class="home-articles-pagination">
+                        <span class="pagination-info" id="paginationInfo">1-5</span>
+                        <div class="pagination-btns">
+                            <button class="pagination-btn" id="prevBtn" disabled aria-label="Précédent">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                            </button>
+                            <button class="pagination-btn" id="nextBtn" aria-label="Suivant">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home-articles-list" id="articlesList">
+                    {{!-- Use native posts context --}}
+                    {{#foreach posts}}
+                    <a href="{{url}}" class="home-article-row anim-item" data-index="{{@index}}">
+                        <span class="article-num">{{@number}}</span>
+                        <div class="article-info">
+                            <h3 class="article-name">{{title}}</h3>
+                            <div class="article-details">
+                                <span class="article-cat">
+                                    {{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}
+                                </span>
+                                <span>{{reading_time}} min</span>
+                            </div>
+                        </div>
+                        <span class="article-date">{{date format="D MMM YYYY"}}</span>
+                    </a>
+                    {{/foreach}}
+                </div>
+            </div>
+        </section>
+
+        {{!-- SECTION 6: FOOTER --}}
+        <section class="home-section home-footer-section" data-section="6">
+            <div class="home-footer-content">
+                <div class="home-footer-logo anim-item">
+                    <span class="logo-bracket">&gt;_</span>{{@site.title}}
+                </div>
+                <p class="home-footer-desc anim-item">Deep dives techniques pour ingénieurs DevOps et SRE.</p>
+                
+                <div class="home-footer-socials anim-item">
+                    {{#if @site.twitter}}
+                    <a href="{{@site.twitter}}" class="footer-social" title="X/Twitter" target="_blank" rel="noopener">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    {{/if}}
+                    <a href="{{@site.url}}/rss/" class="footer-social" title="RSS" target="_blank" rel="noopener">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/></svg>
+                    </a>
+                    <a href="https://fr.tipeee.com/codermug" class="footer-social" title="Tipeee - Soutenir" target="_blank" rel="noopener">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </a>
+                </div>
+
+                <p class="home-footer-copy anim-item">&copy; {{date format="YYYY"}} {{@site.title}} — Un café mérité.</p>
+            </div>
+        </section>
+
     </div>
-  </section>
-
-  <!-- Articles Grid -->
-  <section class="articles-section">
-    <div class="container">
-      <div class="articles-grid">
-        {{#foreach posts}}
-        <article class="article-card">
-          <div class="card-inner">
-            <!-- Card Image -->
-            <div class="card-image">
-              {{#if feature_image}}
-              <img src="{{feature_image}}" alt="{{title}}" loading="lazy">
-              <div class="card-image-overlay"></div>
-              {{else}}
-              <div class="card-image-placeholder" data-tag="{{primary_tag.slug}}">
-                <span class="placeholder-icon"></span>
-              </div>
-              {{/if}}
-            </div>
-
-            <!-- Card Header -->
-            <div class="card-header">
-              <span class="card-tag">
-                {{#if primary_tag}}
-                {{primary_tag.name}}
-                {{else}}
-                ARTICLE
-                {{/if}}
-              </span>
-              <div class="card-icon" data-tag="{{primary_tag.slug}}">
-                <span class="tag-icon"></span>
-              </div>
-            </div>
-
-            <!-- Card Content -->
-            <div class="card-content">
-              <h2 class="card-title">
-                <a href="{{url}}">{{title}}</a>
-              </h2>
-              <p class="card-excerpt">{{excerpt words="20"}}</p>
-            </div>
-
-            <!-- Card Footer -->
-            <div class="card-footer">
-              <div class="card-meta">
-                <span class="card-date">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  {{date format="D MMM YYYY"}}
-                </span>
-                <span class="card-reading-time">
-                  · {{reading_time}}
-                </span>
-              </div>
-              <a href="{{url}}" class="card-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div class="card-glow"></div>
-        </article>
-        {{/foreach}}
-      </div>
-    </div>
-  </section>
-
-  <!-- Pagination -->
-  {{#if pagination.pages}}
-  {{#if pagination.total}}
-  <nav class="pagination">
-    <div class="container">
-      {{#if pagination.prev}}
-      <a href="{{pagination.prev}}" class="pagination-btn prev">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Précédent
-      </a>
-      {{/if}}
-
-      <span class="pagination-info">Page {{pagination.page}} sur {{pagination.pages}}</span>
-
-      {{#if pagination.next}}
-      <a href="{{pagination.next}}" class="pagination-btn next">
-        Suivant
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7" />
-        </svg>
-      </a>
-      {{/if}}
-    </div>
-  </nav>
-  {{/if}}
-  {{/if}}
-
-  </div>
-
-  <script>
-    // Tag icons mapping
-    document.addEventListener('DOMContentLoaded', function () {
-      const tagIcons = {
-        'k8s-deep-dive': '☸️',
-        'itil': '📋',
-        'note-de-version': '📝',
-        'notes-de-version': '📝',
-        'default': '💻'
-      };
-
-      // Apply icons to card-icon elements
-      document.querySelectorAll('.card-icon[data-tag]').forEach(function (el) {
-        const tag = el.getAttribute('data-tag');
-        const icon = tagIcons[tag] || tagIcons['default'];
-        const iconEl = el.querySelector('.tag-icon');
-        if (iconEl) {
-          iconEl.textContent = icon;
-        }
-      });
-
-      // Apply icons to placeholder elements
-      document.querySelectorAll('.card-image-placeholder[data-tag]').forEach(function (el) {
-        const tag = el.getAttribute('data-tag');
-        const icon = tagIcons[tag] || tagIcons['default'];
-        const iconEl = el.querySelector('.placeholder-icon');
-        if (iconEl) {
-          iconEl.textContent = icon;
-        }
-      });
-    });
-
-    // Back to top on reload
-    if (history.scrollRestoration) {
-      history.scrollRestoration = 'manual';
-    } else {
-      window.onbeforeunload = function () {
-        window.scrollTo(0, 0);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      let bgContainer = document.getElementById('fixed-hero-bg');
-      if (!bgContainer) {
-        bgContainer = document.createElement('div');
-        bgContainer.id = 'fixed-hero-bg';
-        document.body.prepend(bgContainer);
-      }
-
-      const heroContent = document.querySelector('.hero-banner-content');
-
-      function handleScroll() {
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-
-        let opacity = 1 - (scrollY / (windowHeight * 0.3));
-
-        if (opacity < 0) opacity = 0;
-
-        bgContainer.style.opacity = opacity;
-
-        if (heroContent) {
-          heroContent.style.opacity = opacity;
-          heroContent.style.pointerEvents = opacity < 0.1 ? 'none' : 'auto';
-        }
-      }
-
-      window.addEventListener('scroll', () => window.requestAnimationFrame(handleScroll));
-      handleScroll();
-    });
-  </script>
+</div>

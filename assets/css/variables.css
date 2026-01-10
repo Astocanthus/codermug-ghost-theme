@@ -98,8 +98,8 @@
   --glow-text: 0 0 30px var(--color-orange-glow);
 
   --transition-fast: 0.15s ease;
-  --transition-base: 0.3s ease;
-  --transition-slow: 0.5s ease;
+  --transition-base: 0.7s ease;
+  --transition-slow: 1s ease;
 
   --radius-sm: 8px;
   --radius-md: 12px;
