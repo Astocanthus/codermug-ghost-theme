@@ -17,25 +17,24 @@
   const CONFIG = {
     ORANGE: 0xff8c00,
     RUNNER_COLOR: 0xffaa44,
-    SPARK_COLOR: 0xffaa00, // ORANGE INTENSE
+    SPARK_COLOR: 0xffaa00,
     BLOOM_STRENGTH: 0.85,
     BLOOM_RADIUS: 0.4,
     BLOOM_THRESHOLD: 0.15,
     GLOBAL_SPEED: 0.8,
 
-    MIN_DIST_X: 40,
-    MAX_LINES_PER_SIDE: 4,
-    PARTICLE_COUNT: 700,
+    MIN_DIST_X: 40,         // Minimum horizontal spacing between lines
+    MAX_LINES_PER_SIDE: 4,  // Limit active lines per side to avoid clutter
+    PARTICLE_COUNT: 400,
     
-    // NOUVEAU: Espacement vertical des murs latéraux (800px = ~Moitié moins dense)
-    SIDE_SPACING: 800
+    SIDE_SPACING: 800       // Vertical spacing for side wall lines (higher = less density)
   };
 
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance", alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // --- MONTAGE DOM ---
+  // --- DOM MOUNTING ---
   const container = document.getElementById('circuit-background');
   if (container) {
     while (container.firstChild) container.removeChild(container.firstChild);
@@ -75,16 +74,16 @@
 
   const bgTex = createTexture((ctx, w, h) => {
     ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, w, h);
+    // Subtle vignette for depth
     const g = ctx.createRadialGradient(w / 2, h / 2, w * 0.6, w / 2, h / 2, w * 1.2);
     g.addColorStop(0, 'rgba(0,0,0,1)');
     g.addColorStop(1, 'rgba(40, 15, 0, 0.1)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
   }, 512, 512);
 
-  // HALO ADOUCI (Bout des lignes)
+  // SOFT HALO (Line endpoints)
   const haloTex = createTexture((ctx, w, h) => {
     const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
-    // Opacité max réduite à 0.6 (au lieu de 1.0) pour moins d'agressivité
     g.addColorStop(0, 'rgba(255, 140, 0, 0.6)'); 
     g.addColorStop(0.5, 'rgba(255, 140, 0, 0.2)');
     g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -101,10 +100,9 @@
     ctx.fillRect(w * 0.2, 0, w * 0.6, h);
   }, 16, 128);
 
-  // SPARK ADOUCI
+  // SOFT SPARK (Less intense core)
   const sparkTex = createTexture((ctx, w, h) => {
     const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
-    // Coeur moins intense (0.8 au lieu de 1) et un peu plus jaune/doux
     g.addColorStop(0, 'rgba(255, 200, 50, 0.8)'); 
     g.addColorStop(0.4, 'rgba(255, 140, 0, 0.4)'); 
     g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -117,7 +115,7 @@
     createTexture((ctx, w, h) => { ctx.strokeStyle = '#ff8c00'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(w / 2, h * 0.2); ctx.lineTo(w * 0.8, h * 0.8); ctx.lineTo(w * 0.2, h * 0.8); ctx.closePath(); ctx.stroke(); })
   ];
 
-  // --- DATA ---
+  // --- STATE VARIABLES ---
   let width = window.innerWidth, height = window.innerHeight;
   let leftRailX = width * 0.32, rightRailX = width * 0.68;
 
@@ -126,10 +124,10 @@
   let particles = [];
 
   const depthLayers = [
-    { id: 0, depth: 0.3, opacity: 0.25, xZone: [0.01, 0.06] },
-    { id: 1, depth: 0.5, opacity: 0.35, xZone: [0.06, 0.12] },
-    { id: 2, depth: 0.75, opacity: 0.50, xZone: [0.12, 0.18] },
-    { id: 3, depth: 1.0, opacity: 0.75, xZone: [0.18, 0.26] }
+    { id: 0, depth: 0.3, opacity: 0.15, xZone: [0.01, 0.06] },
+    { id: 1, depth: 0.5, opacity: 0.25, xZone: [0.06, 0.12] },
+    { id: 2, depth: 0.75, opacity: 0.40, xZone: [0.12, 0.18] },
+    { id: 3, depth: 1.0, opacity: 0.55, xZone: [0.18, 0.26] }
   ];
 
   function createSprite(tex, size, color, opacity) {
@@ -139,12 +137,14 @@
     return s;
   }
 
-  // --- COLLISION ---
+  // --- COLLISION DETECTION ---
   function checkCollision(x, y, layerId, side) {
     const candidates = circuits.filter(c => c.layer.id === layerId && c.side === side);
     for (let c of candidates) {
       const cY = c.mesh.position.y;
+      // Vertical check
       if (y > cY + c.bounds.top + 50 || y + 300 < cY) continue;
+      // Horizontal check
       for (let pt of c.path) {
         if (Math.abs(pt.x - x) < CONFIG.MIN_DIST_X) return true;
       }
@@ -152,12 +152,13 @@
     return false;
   }
 
-  // --- GENERATION FOND ---
+  // --- BACKGROUND CIRCUIT GENERATION ---
   function createCircuitObject(spawnY, layer, side, isPreFill = false) {
     const zs = layer.xZone[0] * width, ze = layer.xZone[1] * width;
     let startX = null, path = null, bounds = null;
     let isLong = false;
 
+    // Check existing long circuits count
     const longCount = circuits.filter(c => c.isLong && c.mesh.position.y > -height && c.mesh.position.y < height).length;
     const forceLong = longCount < 1;
 
@@ -177,9 +178,11 @@
           curY += (isLong ? 80 : 50) + Math.random() * (isLong ? 150 : 80) + (attempt * 2);
           tempPath.push({ x: curX, y: curY });
 
+          // Random diagonal turn
           if (s < segs - 1 && Math.random() > 0.15) {
             const dx = (20 + Math.random() * 50) * (Math.random() > 0.5 ? 1 : -1);
             let nx = curX + dx;
+            // Clamp within zone
             if (side === 'left') nx = Math.max(zs + 5, Math.min(ze - 5, nx));
             else nx = Math.max(width - ze + 5, Math.min(width - zs - 5, nx));
 
@@ -222,7 +225,7 @@
     mesh.position.set(0, finalY, 0);
 
     const capSize = (10 + Math.random() * 6) * layer.depth;
-    // Opacité réduite pour les boules aux bouts (x1.5 au lieu de x2)
+    // Reduced opacity for caps
     const sCap = createSprite(haloTex, capSize, CONFIG.ORANGE, layer.opacity * 1.5);
     const eCap = createSprite(haloTex, capSize, CONFIG.ORANGE, layer.opacity * 1.5);
 
@@ -232,7 +235,7 @@
     const runners = [];
     let rectSegmentIndex = -1;
 
-    // 1. RECTANGLE
+    // 1. RECTANGLE GENERATION
     const vSegs = [];
     for (let i = 1; i < path.length; i++) {
       if (Math.abs(path[i].x - path[i - 1].x) < 2 && Math.abs(path[i].y - path[i - 1].y) > 120) {
@@ -265,7 +268,7 @@
       });
     }
 
-    // 2. SPARK (Exclusion)
+    // 2. SPARK GENERATION (Exclusive)
     const availableSegments = [];
     for (let i = 0; i < path.length - 1; i++) {
       if (i !== rectSegmentIndex) {
@@ -297,6 +300,7 @@
     return { mesh, sCap, eCap, runners, path, layer, side, bounds, isLong, pulse: Math.random() * 10 };
   }
 
+  // --- SIDE CIRCUITS GENERATION ---
   function createSideCircuit(spawnY, side) {
     const sx = side === 'left' ? leftRailX : rightRailX;
     const dir = side === 'left' ? -1 : 1;
@@ -318,11 +322,13 @@
     const mesh = new THREE.Line(geo, mat);
     mesh.position.set(0, spawnY, 0);
     scene.add(mesh);
-    const sCap = createSprite(haloTex, 16, CONFIG.ORANGE, 0.7); scene.add(sCap); // Opacité réduite
-    const eCap = createSprite(haloTex, 16, CONFIG.ORANGE, 0.5); scene.add(eCap); // Opacité réduite
+    // Reduced opacity for side caps
+    const sCap = createSprite(haloTex, 16, CONFIG.ORANGE, 0.7); scene.add(sCap);
+    const eCap = createSprite(haloTex, 16, CONFIG.ORANGE, 0.5); scene.add(eCap);
     return { mesh, sCap, eCap, startX: sx, localPath: path, side };
   }
 
+  // --- PARTICLE GENERATION ---
   function createParticle() {
     const depth = 0.3 + Math.random() * 0.7;
     const side = Math.random() > 0.5;
@@ -336,6 +342,7 @@
     return { mesh, depth, speedOffset: Math.random() * 0.2, rotSpeed: (Math.random() - 0.5) * 0.03, pulse: Math.random() * 10 };
   }
 
+  // --- INIT ---
   function init() {
     width = window.innerWidth; height = window.innerHeight;
     leftRailX = width * 0.32; rightRailX = width * 0.68;
@@ -356,6 +363,7 @@
 
     for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) particles.push(createParticle());
 
+    // Pre-fill background circuits
     depthLayers.forEach(layer => {
       let simY = -height;
       while (simY < height * 1.5) {
@@ -371,12 +379,12 @@
       }
     });
 
+    // Pre-fill side circuits with spacing
     let sideY = -height;
     while (sideY < height * 1.5) {
       if (Math.random() > 0.4) sideCircuits.push(createSideCircuit(sideY, 'left'));
       if (Math.random() > 0.4) sideCircuits.push(createSideCircuit(sideY + 150, 'right'));
       
-      // ESPACEMENT AUGMENTÉ POUR RÉDUIRE LE NOMBRE DE LIGNES (800 au lieu de 300)
       sideY += CONFIG.SIDE_SPACING;
     }
 
@@ -387,10 +395,12 @@
   window.addEventListener('resize', init);
   init();
 
+  // --- ANIMATION LOOP ---
   function animate() {
     requestAnimationFrame(animate);
     const speed = CONFIG.GLOBAL_SPEED;
 
+    // Update background circuits
     for (let i = circuits.length - 1; i >= 0; i--) {
       const c = circuits[i];
       c.mesh.position.y += speed;
@@ -431,6 +441,7 @@
       }
     }
 
+    // Regenerate background circuits
     depthLayers.forEach(layer => {
       const cs = circuits.filter(c => c.layer.id === layer.id);
       const lefts = cs.filter(c => c.side === 'left');
@@ -453,12 +464,12 @@
       }
     });
 
+    // Update side circuits
     for (let i = sideCircuits.length - 1; i >= 0; i--) {
       const c = sideCircuits[i];
       c.mesh.position.y += speed;
       if (c.mesh.position.y > height / 2 + 200) {
         const minSideY = Math.min(...sideCircuits.map(s => s.mesh.position.y));
-        // LOOP AVEC ESPACEMENT AUGMENTÉ
         const targetY = (minSideY < -height) ? minSideY - CONFIG.SIDE_SPACING : -height / 2 - 300;
         c.mesh.position.y = targetY;
       }
@@ -479,6 +490,7 @@
       c.eCap.position.set(lx, ly, 1);
     }
 
+    // Update particles
     particles.forEach(p => {
       p.mesh.position.y += speed + p.speedOffset;
       if (p.mesh.position.y > height / 2 + 200) {
