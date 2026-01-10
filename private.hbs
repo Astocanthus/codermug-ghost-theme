@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="{{@site.locale}}">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Site Privé - {{@site.title}}</title>
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  {{> circuit-background-styles}}
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #050508;
+    }
+
+    .private-page {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .private-form {
+      position: absolute;
+      bottom: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .private-form-title {
+      font-size: 0.875rem;
+      color: rgba(255, 140, 0, 0.6);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .private-form-input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background: rgba(255, 140, 0, 0.05);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+      border-radius: 4px;
+      color: #ff8c00;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .private-form-input::placeholder {
+      color: rgba(255, 140, 0, 0.4);
+    }
+
+    .private-form-input:focus {
+      outline: none;
+      border-color: #ff8c00;
+      box-shadow: 
+        0 0 20px rgba(255, 140, 0, 0.2),
+        inset 0 0 20px rgba(255, 140, 0, 0.05);
+    }
+
+    .private-form-button {
+      margin-top: 1rem;
+      padding: 0.875rem 2rem;
+      background: transparent;
+      border: 1px solid rgba(255, 140, 0, 0.5);
+      border-radius: 4px;
+      color: #ff8c00;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .private-form-button:hover {
+      background: rgba(255, 140, 0, 0.1);
+      border-color: #ff8c00;
+      box-shadow: 0 0 30px rgba(255, 140, 0, 0.3);
+    }
+
+    .private-error {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(255, 60, 60, 0.1);
+      border: 1px solid rgba(255, 60, 60, 0.3);
+      border-radius: 4px;
+      color: rgba(255, 60, 60, 0.8);
+      font-size: 0.875rem;
+    }
+  </style>
+
+  {{ghost_head}}
+</head>
+
+<body class="private-template">
+
+  <div class="private-page">
+    {{> circuit-background}}
+    
+    <div class="circuit-overlay">
+      <div class="circuit-overlay-content">
+        <h1 class="circuit-overlay-logo">&gt;_CODERMUG<span class="cursor"></span></h1>
+        <p class="circuit-overlay-status offline">OFFLINE</p>
+      </div>
+    </div>
+
+    <form class="private-form" method="post" action="{{action}}">
+      <p class="private-form-title">Accès restreint</p>
+      
+      <input 
+        class="private-form-input" 
+        type="password" 
+        name="password" 
+        placeholder="••••••••"
+        autocomplete="current-password"
+        autofocus
+      />
+      
+      <button class="private-form-button" type="submit">
+        Authentifier
+      </button>
+
+      {{#if error}}
+        <p class="private-error">{{error.message}}</p>
+      {{/if}}
+    </form>
+  </div>
+
+  {{> circuit-background-script}}
+  {{ghost_foot}}
+</body>
+
+</html>
