@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
        ========================================================================== */
 
     var track = document.querySelector('.home-track');
-    var wrapper = document.querySelector('.home-wrapper');
     var dots = document.querySelectorAll('.home-nav-dot');
     var sections = document.querySelectorAll('.home-section');
 
@@ -326,3 +325,50 @@ document.addEventListener('DOMContentLoaded', function() {
         slideToSection(0);
     }
 });
+
+function initVisitedSections() {
+    const sections = document.querySelectorAll('.home-section');
+    
+    // Function to mark a section as visited
+    function markAsVisited(section) {
+        if (section && !section.classList.contains('visited')) {
+            section.classList.add('visited');
+        }
+    }
+    
+    // Mark initially active section
+    const activeSection = document.querySelector('.home-section.active');
+    if (activeSection) {
+        markAsVisited(activeSection);
+    }
+    
+    // Use MutationObserver to detect when sections become active
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const section = mutation.target;
+                if (section.classList.contains('active')) {
+                    // Small delay to let CSS transition start
+                    requestAnimationFrame(() => {
+                        markAsVisited(section);
+                    });
+                }
+            }
+        });
+    });
+    
+    // Observe all sections for class changes
+    sections.forEach((section) => {
+        observer.observe(section, { 
+            attributes: true, 
+            attributeFilter: ['class'] 
+        });
+    });
+    }
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVisitedSections);
+} else {
+    initVisitedSections();
+}
