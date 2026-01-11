@@ -476,33 +476,3 @@
   text-align: center;
   padding: var(--spacing-md);
 }
-
-/* ==========================================================================
-    Blinking Chevron & Logo Effects
-   ========================================================================== */
-
-.logo-bracket--blink {
-    animation: blinkBracket 1.5s step-end infinite;
-}
-
-@keyframes blinkBracket {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-/* Blinking nav chevron */
-.nav-chevron {
-    animation: blinkChevron 2s ease-in-out infinite;
-}
-
-@keyframes blinkChevron {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
-
-/* Dropdown chevron rotation still works */
-.nav-item.has-dropdown:hover .nav-chevron {
-    transform: rotate(180deg);
-    animation: none;
-    opacity: 1;
-}
