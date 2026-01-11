@@ -52,11 +52,11 @@
             <div class="home-section-container">
                 <div class="home-section-header anim-item">
                     <div>
-                        <span class="da-section-label">Featured</span>
-                        <h2 class="da-section-title">Deep Dives</h2>
+                        <span class="da-section-label">En vedette</span>
+                        <h2 class="da-section-title">Articles Featured</h2>
                     </div>
                     <a href="{{@site.url}}" class="home-section-link">
-                        Voir la série
+                        Tous les articles
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
@@ -65,13 +65,22 @@
                     {{!-- Use native posts context with limit --}}
                     {{#foreach posts limit="3"}}
                     <a href="{{url}}" class="da-card anim-item {{#if @first}}da-card--primary{{/if}}">
+                        {{!-- Corner decorations --}}
+                        <div class="da-card-corner da-card-corner--tl">
+                            <svg viewBox="0 0 20 20"><path d="M0 20V0h20" /></svg>
+                        </div>
+                        <div class="da-card-corner da-card-corner--br">
+                            <svg viewBox="0 0 20 20"><path d="M0 20V0h20" /></svg>
+                        </div>
+                        {{!-- Image placeholder - use feature_image from Ghost --}}
                         <div class="da-card-img">
                             {{#if feature_image}}
                             <img src="{{feature_image}}" alt="{{title}}">
                             {{else}}
-                            <img src="{{asset "images/placeholder.png"}}" alt="{{title}}">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-elevated) 100%);display:flex;align-items:center;justify-content:center;">
+                                <span style="font-family:var(--font-display);font-size:clamp(1.5rem, 4vw, 2.5rem);color:var(--color-orange);text-shadow:var(--glow-text);">{{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}</span>
+                            </div>
                             {{/if}}
-                            <span class="da-card-img-title">{{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}</span>
                         </div>
                         <div class="da-card-body">
                             <span class="da-card-tag">
@@ -80,7 +89,7 @@
                             </span>
                             <h3 class="da-card-title">{{title}}</h3>
                             {{#if @first}}
-                            <p class="da-card-excerpt">{{excerpt words="25"}}</p>
+                            <p class="da-card-excerpt">{{excerpt words="20"}}</p>
                             {{/if}}
                             <div class="da-card-footer">
                                 <div class="da-card-meta">
@@ -221,14 +230,14 @@
             <div class="home-section-container">
                 <div class="home-articles-header anim-item">
                     <div>
-                        <span class="da-section-label">Archives</span>
+                        <span class="da-section-label">Récents</span>
                         <h2 class="da-section-title">Tous les articles</h2>
                     </div>
-                    <div class="home-articles-pagination">
-                        <span class="pagination-info" id="paginationInfo">1-5</span>
-                        <div class="pagination-btns">
-                            <button class="pagination-btn" id="prevBtn" disabled aria-label="Précédent">‹</button>
-                            <button class="pagination-btn" id="nextBtn" aria-label="Suivant">›</button>
+                    <div class="da-pagination">
+                        <span class="da-pagination-info" id="paginationInfo">1-5</span>
+                        <div class="da-pagination-btns">
+                            <button class="da-pagination-btn" id="prevBtn" disabled aria-label="Précédent">‹</button>
+                            <button class="da-pagination-btn" id="nextBtn" aria-label="Suivant">›</button>
                         </div>
                     </div>
                 </div>

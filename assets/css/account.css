@@ -1,0 +1,511 @@
+/* ==========================================================================
+   Codermug Theme - Account Page Styles
+   ========================================================================== */
+
+/* ==========================================================================
+   ACCOUNT CONTAINER
+   ========================================================================== */
+
+.account-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.account-container {
+    padding: var(--spacing-xl) 0;
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
+.account-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.account-header-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    filter: drop-shadow(0 0 20px var(--color-orange-glow));
+}
+
+.account-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.account-prompt {
+    color: var(--color-orange);
+    text-shadow: var(--glow-text);
+}
+
+.account-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   SECTIONS
+   ========================================================================== */
+
+.account-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.account-section-header {
+    margin-bottom: var(--spacing-md);
+}
+
+.account-section-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.section-icon {
+    font-size: 1.5rem;
+}
+
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+
+.account-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-base);
+}
+
+.account-card:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--glow-orange);
+}
+
+/* ==========================================================================
+   INFO GRID
+   ========================================================================== */
+
+.account-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.account-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.account-info-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-dim);
+}
+
+.account-info-value {
+    font-size: 1rem;
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.account-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-family: var(--font-mono);
+}
+
+.account-status.paid {
+    background: var(--color-orange-subtle);
+    color: var(--color-orange);
+    border: 1px solid var(--color-border);
+}
+
+.account-status.free {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+}
+
+/* ==========================================================================
+   SUBSCRIPTION
+   ========================================================================== */
+
+.account-subscription-info {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.subscription-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, var(--color-orange-subtle), var(--color-orange-soft));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--spacing-md);
+}
+
+.badge-icon {
+    font-size: 1.25rem;
+}
+
+.badge-text {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-orange);
+    letter-spacing: 0.05em;
+}
+
+.subscription-description {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+/* ==========================================================================
+   PREFERENCES
+   ========================================================================== */
+
+.account-preferences {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.preference-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+}
+
+.preference-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.preference-label {
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.preference-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.toggle-status {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+}
+
+.toggle-status.active {
+    background: var(--color-orange-subtle);
+    color: var(--color-orange);
+}
+
+.toggle-status.inactive {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-dim);
+}
+
+/* ==========================================================================
+   ACTIVITY
+   ========================================================================== */
+
+.account-activity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.activity-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+}
+
+.activity-stat:hover {
+    border-color: var(--color-orange);
+    box-shadow: var(--glow-orange);
+}
+
+.stat-icon {
+    font-size: 2rem;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-orange);
+    text-shadow: var(--glow-text);
+}
+
+/* ==========================================================================
+   QUICK LINKS
+   ========================================================================== */
+
+.account-quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+}
+
+.quick-link:hover {
+    border-color: var(--color-orange);
+    box-shadow: var(--glow-orange);
+    transform: translateY(-3px);
+}
+
+.quick-link-icon {
+    font-size: 2rem;
+}
+
+.quick-link-text {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+}
+
+/* ==========================================================================
+   BUTTONS & ACTIONS
+   ========================================================================== */
+
+.account-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.account-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    cursor: pointer;
+}
+
+.account-btn--primary {
+    background: var(--color-orange);
+    color: var(--color-bg);
+    border: 1px solid var(--color-orange);
+}
+
+.account-btn--primary:hover {
+    box-shadow: var(--glow-orange-strong);
+    transform: translateY(-2px);
+}
+
+.account-btn--ghost {
+    background: transparent;
+    color: var(--color-orange);
+    border: 1px solid var(--color-border);
+}
+
+.account-btn--ghost:hover {
+    background: var(--color-orange-subtle);
+    border-color: var(--color-orange);
+}
+
+.account-btn--danger {
+    background: transparent;
+    color: #ff3c3c;
+    border: 1px solid rgba(255, 60, 60, 0.3);
+}
+
+.account-btn--danger:hover {
+    background: rgba(255, 60, 60, 0.1);
+    border-color: #ff3c3c;
+    box-shadow: 0 0 20px rgba(255, 60, 60, 0.3);
+}
+
+/* ==========================================================================
+   DANGER ZONE
+   ========================================================================== */
+
+.account-section--danger {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 2px solid rgba(255, 60, 60, 0.2);
+}
+
+.account-card--danger {
+    background: rgba(255, 60, 60, 0.05);
+    border-color: rgba(255, 60, 60, 0.3);
+}
+
+.danger-description {
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid rgba(255, 60, 60, 0.2);
+}
+
+/* ==========================================================================
+   LOGGED OUT STATE
+   ========================================================================== */
+
+.account-logged-out {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+}
+
+.logged-out-content {
+    text-align: center;
+    max-width: 500px;
+}
+
+.logged-out-icon {
+    font-size: 5rem;
+    margin-bottom: var(--spacing-lg);
+    filter: drop-shadow(0 0 30px var(--color-orange-glow));
+}
+
+.logged-out-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+}
+
+.logged-out-message {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-xl);
+}
+
+.logged-out-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.logged-out-actions .account-btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .account-page {
+        margin: 0;
+        padding: var(--spacing-md);
+    }
+
+    .account-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .account-activity {
+        grid-template-columns: 1fr;
+    }
+
+    .account-quick-links {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .account-actions {
+        flex-direction: column;
+    }
+
+    .account-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .preference-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .account-title {
+        font-size: 2rem;
+    }
+
+    .logged-out-icon {
+        font-size: 3.5rem;
+    }
+
+    .logged-out-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-quick-links {
+        grid-template-columns: 1fr;
+    }
+}
