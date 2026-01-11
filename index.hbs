@@ -35,9 +35,9 @@
                     </p>
                 </div>
 
-                <div class="home-hero-cta">
-                    <a href="#" class="home-cta-btn home-cta-btn--primary" data-goto="1">Explorer</a>
-                    <a href="{{@site.url}}/about/" class="home-cta-btn home-cta-btn--ghost">À propos</a>
+                <div class="da-btn-group">
+                    <a href="#" class="da-btn da-btn--primary" data-goto="1">Explorer</a>
+                    <a href="{{@site.url}}/about/" class="da-btn da-btn--ghost">À propos</a>
                 </div>
             </div>
 
@@ -52,43 +52,42 @@
             <div class="home-section-container">
                 <div class="home-section-header anim-item">
                     <div>
-                        <span class="home-section-label">En vedette</span>
-                        <h2 class="home-section-title">Articles Featured</h2>
+                        <span class="da-section-label">Featured</span>
+                        <h2 class="da-section-title">Deep Dives</h2>
                     </div>
                     <a href="{{@site.url}}" class="home-section-link">
-                        Tous les articles
+                        Voir la série
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
 
-                <div class="home-featured-grid">
+                <div class="da-featured-grid">
                     {{!-- Use native posts context with limit --}}
                     {{#foreach posts limit="3"}}
-                    <a href="{{url}}" class="home-featured-card anim-item {{#if @first}}home-featured-card--primary{{/if}}">
-                        <div class="featured-card-header">
-                            {{#if primary_tag}}
-                            <span class="featured-card-icon" data-tag="{{primary_tag.slug}}">📄</span>
-                            <span class="featured-card-series">{{primary_tag.name}}</span>
+                    <a href="{{url}}" class="da-card anim-item {{#if @first}}da-card--primary{{/if}}">
+                        <div class="da-card-img">
+                            {{#if feature_image}}
+                            <img src="{{feature_image}}" alt="{{title}}">
                             {{else}}
-                            <span class="featured-card-icon">📄</span>
-                            <span class="featured-card-series">Article</span>
+                            <img src="{{asset "images/placeholder.png"}}" alt="{{title}}">
                             {{/if}}
+                            <span class="da-card-img-title">{{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}</span>
                         </div>
-                        
-                        <div class="featured-card-body">
-                            <h3 class="featured-card-title">{{title}}</h3>
+                        <div class="da-card-body">
+                            <span class="da-card-tag">
+                                <span class="da-card-tag-icon">☸️</span>
+                                {{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}
+                            </span>
+                            <h3 class="da-card-title">{{title}}</h3>
                             {{#if @first}}
-                            <p class="featured-card-excerpt">{{excerpt words="25"}}</p>
+                            <p class="da-card-excerpt">{{excerpt words="25"}}</p>
                             {{/if}}
-                        </div>
-                        
-                        <div class="featured-card-footer">
-                            <div class="featured-card-meta">
-                                <span>{{date format="D MMM YYYY"}}</span>
-                                <span>{{reading_time}} min</span>
-                            </div>
-                            <div class="featured-card-arrow">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            <div class="da-card-footer">
+                                <div class="da-card-meta">
+                                    <span>{{date format="D MMM YYYY"}}</span>
+                                    <span>{{reading_time}} min</span>
+                                </div>
+                                <span class="da-card-arrow">→</span>
                             </div>
                         </div>
                     </a>
@@ -222,37 +221,33 @@
             <div class="home-section-container">
                 <div class="home-articles-header anim-item">
                     <div>
-                        <span class="home-section-label">Récents</span>
-                        <h2 class="home-section-title">Tous les articles</h2>
+                        <span class="da-section-label">Archives</span>
+                        <h2 class="da-section-title">Tous les articles</h2>
                     </div>
                     <div class="home-articles-pagination">
                         <span class="pagination-info" id="paginationInfo">1-5</span>
                         <div class="pagination-btns">
-                            <button class="pagination-btn" id="prevBtn" disabled aria-label="Précédent">
-                                <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-                            </button>
-                            <button class="pagination-btn" id="nextBtn" aria-label="Suivant">
-                                <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-                            </button>
+                            <button class="pagination-btn" id="prevBtn" disabled aria-label="Précédent">‹</button>
+                            <button class="pagination-btn" id="nextBtn" aria-label="Suivant">›</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="home-articles-list" id="articlesList">
+                <div class="da-article-list" id="articlesList">
                     {{!-- Use native posts context --}}
                     {{#foreach posts}}
-                    <a href="{{url}}" class="home-article-row anim-item" data-index="{{@index}}">
-                        <span class="article-num">{{@number}}</span>
-                        <div class="article-info">
-                            <h3 class="article-name">{{title}}</h3>
-                            <div class="article-details">
-                                <span class="article-cat">
+                    <a href="{{url}}" class="da-article-row anim-item" data-index="{{@index}}" data-num="{{@number}}">
+                        <span class="da-article-num"></span>
+                        <div class="da-article-info">
+                            <h3 class="da-article-title">{{title}}</h3>
+                            <div class="da-article-meta">
+                                <span class="da-article-cat">
                                     {{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}
                                 </span>
                                 <span>{{reading_time}} min</span>
                             </div>
                         </div>
-                        <span class="article-date">{{date format="D MMM YYYY"}}</span>
+                        <span class="da-article-date">{{date format="D MMM YYYY"}}</span>
                     </a>
                     {{/foreach}}
                 </div>

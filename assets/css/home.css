@@ -130,14 +130,14 @@ body.home-template .site-footer {
 /* Initial state - hidden until first visit */
 .anim-item {
     opacity: 0;
-    transform: translateY(25px);
+    transform: translateY(30px);
 }
 
-/* Animate IN when section becomes active */
+/* Animate IN when section becomes active - slower, more visible */
 .home-section.active .anim-item {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 /* STAY VISIBLE after section was visited - no reset, no disappearing */
@@ -146,17 +146,17 @@ body.home-template .site-footer {
     transform: translateY(0);
 }
 
-/* Staggered delays - only apply during active transition */
+/* Staggered delays - more spread out for cascade effect */
 .home-section.active .anim-item:nth-child(1) { transition-delay: 0.1s; }
-.home-section.active .anim-item:nth-child(2) { transition-delay: 0.15s; }
-.home-section.active .anim-item:nth-child(3) { transition-delay: 0.2s; }
-.home-section.active .anim-item:nth-child(4) { transition-delay: 0.25s; }
-.home-section.active .anim-item:nth-child(5) { transition-delay: 0.3s; }
-.home-section.active .anim-item:nth-child(6) { transition-delay: 0.35s; }
-.home-section.active .anim-item:nth-child(7) { transition-delay: 0.4s; }
-.home-section.active .anim-item:nth-child(8) { transition-delay: 0.45s; }
-.home-section.active .anim-item:nth-child(9) { transition-delay: 0.5s; }
-.home-section.active .anim-item:nth-child(10) { transition-delay: 0.55s; }
+.home-section.active .anim-item:nth-child(2) { transition-delay: 0.2s; }
+.home-section.active .anim-item:nth-child(3) { transition-delay: 0.3s; }
+.home-section.active .anim-item:nth-child(4) { transition-delay: 0.4s; }
+.home-section.active .anim-item:nth-child(5) { transition-delay: 0.5s; }
+.home-section.active .anim-item:nth-child(6) { transition-delay: 0.6s; }
+.home-section.active .anim-item:nth-child(7) { transition-delay: 0.7s; }
+.home-section.active .anim-item:nth-child(8) { transition-delay: 0.8s; }
+.home-section.active .anim-item:nth-child(9) { transition-delay: 0.9s; }
+.home-section.active .anim-item:nth-child(10) { transition-delay: 1.0s; }
 
 /* ==========================================================================
    SECTION HEADER (Shared)
@@ -904,34 +904,37 @@ body.home-template .site-footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    max-width: 400px;
+    gap: 1.25rem;
+    max-width: 380px;
     margin: 0 auto;
 }
 
 .notify-input {
     width: 100%;
-    padding: 1rem 1.5rem;
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-strong);
+    padding: 1.1rem 1.5rem;
+    background: rgba(10, 10, 15, 0.9);
+    border: 1px solid var(--color-border-hover);
     border-radius: 0;
     color: var(--color-text);
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-align: center;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.15em;
     outline: none;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
 
 .notify-input:focus {
     border-color: var(--color-orange);
-    box-shadow: 0 0 15px hsla(var(--hue-orange), 100%, 50%, 0.15);
+    background: rgba(15, 15, 22, 0.95);
+    box-shadow: 0 0 20px hsla(var(--hue-orange), 100%, 50%, 0.12);
 }
 
 .notify-input::placeholder {
-    color: var(--color-text-dim);
-    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
 }
 
 .home-notify-form .home-cta-btn {
@@ -987,6 +990,10 @@ body.home-template .site-footer {
     color: var(--color-text-secondary);
     cursor: pointer;
     transition: all var(--transition-fast);
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1;
+    padding-bottom: 2px;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -999,19 +1006,6 @@ body.home-template .site-footer {
     opacity: 0.4;
     cursor: not-allowed;
     color: var(--color-text-dim);
-}
-
-.pagination-btn svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-}
-
-.pagination-btn svg path {
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
 }
 
 /* Articles List */

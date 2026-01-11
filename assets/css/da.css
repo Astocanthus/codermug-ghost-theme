@@ -1,0 +1,698 @@
+/* ==========================================================================
+   Codermug Theme - Direction Artistique (da.css)
+   Reusable design components and helpers
+   ========================================================================== */
+
+/* ==========================================================================
+   ANIMATIONS - Keyframes
+   ========================================================================== */
+
+@keyframes da-fadeUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes da-fadeDown {
+    from { 
+        opacity: 0; 
+        transform: translateY(-15px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes da-fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes da-shine {
+    from { left: -100%; }
+    to { left: 100%; }
+}
+
+@keyframes da-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes da-glow {
+    0%, 100% { 
+        box-shadow: 0 0 20px var(--color-orange-glow); 
+    }
+    50% { 
+        box-shadow: 0 0 35px var(--color-orange-glow-strong); 
+    }
+}
+
+/* ==========================================================================
+   CTA BUTTONS - Sci-Fi Style with Cut Corners
+   Usage: <a href="#" class="da-btn da-btn--primary">Explorer</a>
+          <a href="#" class="da-btn da-btn--ghost">À propos</a>
+   ========================================================================== */
+
+.da-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all var(--transition-base);
+    /* Sci-fi cut corners */
+    clip-path: polygon(
+        0 10px, 10px 0,
+        calc(100% - 10px) 0, 100% 10px,
+        100% calc(100% - 10px), calc(100% - 10px) 100%,
+        10px 100%, 0 calc(100% - 10px)
+    );
+}
+
+/* Primary Button - Filled Orange */
+.da-btn--primary {
+    background: var(--color-orange);
+    color: var(--color-bg-deep);
+}
+
+.da-btn--primary:hover {
+    box-shadow: var(--glow-orange-strong);
+    transform: translateY(-3px);
+}
+
+/* Shine effect on hover */
+.da-btn--primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.25), 
+        transparent
+    );
+    transition: none;
+}
+
+.da-btn--primary:hover::after {
+    animation: da-shine 0.5s ease forwards;
+}
+
+/* Ghost Button - Outlined */
+.da-btn--ghost {
+    background: transparent;
+    color: var(--color-orange);
+    border: 1px solid var(--color-border);
+}
+
+.da-btn--ghost:hover {
+    background: var(--color-orange-subtle);
+    border-color: var(--color-orange);
+}
+
+/* Button Group */
+.da-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .da-btn-group {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .da-btn {
+        width: 100%;
+        max-width: 260px;
+    }
+}
+
+/* ==========================================================================
+   ARTICLE TABLE - Archive Style List
+   Usage: 
+   <div class="da-article-list">
+       <a href="#" class="da-article-row">
+           <span class="da-article-num">01</span>
+           <div class="da-article-info">
+               <h3 class="da-article-title">Article Title</h3>
+               <div class="da-article-meta">
+                   <span class="da-article-cat">Category</span>
+                   <span>12 min</span>
+               </div>
+           </div>
+           <span class="da-article-date">5 janv. 2026</span>
+       </a>
+   </div>
+   ========================================================================== */
+
+.da-article-list {
+    display: flex;
+    flex-direction: column;
+    max-width: 850px;
+    counter-reset: article-counter;
+}
+
+.da-article-row {
+    display: grid;
+    grid-template-columns: 50px 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    transition: padding var(--transition-fast);
+    counter-increment: article-counter;
+}
+
+/* Left border indicator - Orange on hover */
+.da-article-row::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.da-article-row:hover::before {
+    background: var(--color-orange);
+    box-shadow: 0 0 8px var(--color-orange-glow);
+}
+
+.da-article-row:hover {
+    padding-left: 0.75rem;
+}
+
+/* Article Number - Orbitron font with zero padding via CSS counters */
+.da-article-num {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-text-dim);
+    transition: color var(--transition-fast), text-shadow var(--transition-fast);
+    min-width: 2.5ch;
+}
+
+.da-article-num::before {
+    content: counter(article-counter, decimal-leading-zero);
+}
+
+.da-article-row:hover .da-article-num {
+    color: var(--color-orange);
+    text-shadow: var(--glow-text);
+}
+
+/* Article Info */
+.da-article-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.da-article-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.da-article-row:hover .da-article-title {
+    color: var(--color-orange);
+}
+
+.da-article-meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+}
+
+/* Category Tag */
+.da-article-cat {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-orange);
+    opacity: 0.7;
+}
+
+/* Date */
+.da-article-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-dim);
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .da-article-row {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+        padding-left: 1rem;
+    }
+    
+    .da-article-row::before {
+        left: 0;
+    }
+    
+    .da-article-num {
+        display: none;
+    }
+    
+    .da-article-title {
+        white-space: normal;
+    }
+    
+    .da-article-date {
+        text-align: left;
+    }
+}
+
+/* ==========================================================================
+   HUD CARD - Sci-Fi Card with Always Visible Border
+   Usage:
+   <a href="#" class="da-card">
+       <div class="da-card-img">
+           <img src="..." alt="">
+           <span class="da-card-img-title">Throttling</span>
+       </div>
+       <div class="da-card-body">
+           <span class="da-card-tag"><span class="da-card-tag-icon">☸️</span> K8S Deep Dive</span>
+           <h3 class="da-card-title">[4/32] : API Server — Throttling & Protection</h3>
+           <p class="da-card-excerpt">FlowSchemas, PriorityLevels et throttling intelligent.</p>
+           <div class="da-card-footer">
+               <div class="da-card-meta"><span>24 déc. 2025</span><span>23 min</span></div>
+               <span class="da-card-arrow">→</span>
+           </div>
+       </div>
+   </a>
+   ========================================================================== */
+
+.da-card {
+    position: relative;
+    background: var(--color-bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+    /* Cut corners */
+    clip-path: polygon(
+        0 16px, 16px 0,
+        calc(100% - 16px) 0, 100% 16px,
+        100% calc(100% - 16px), calc(100% - 16px) 100%,
+        16px 100%, 0 calc(100% - 16px)
+    );
+}
+
+.da-card:hover {
+    transform: translateY(-6px) scale(1.005);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 30px var(--color-orange-glow);
+}
+
+/* ALWAYS VISIBLE Border - Using pseudo-element with mask */
+.da-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(
+        135deg,
+        var(--color-orange) 0%,
+        var(--color-border-hover) 25%,
+        var(--color-border) 50%,
+        var(--color-border-hover) 75%,
+        var(--color-orange) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    clip-path: inherit;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity var(--transition-base), background var(--transition-base);
+}
+
+.da-card:hover::before {
+    opacity: 1;
+    background: linear-gradient(
+        135deg, 
+        var(--color-orange), 
+        var(--color-orange-light), 
+        var(--color-orange)
+    );
+}
+
+/* Corner accent - top left */
+.da-card::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 16px;
+    height: 16px;
+    border-top: 1.5px solid var(--color-orange);
+    border-left: 1.5px solid var(--color-orange);
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+    z-index: 2;
+}
+
+.da-card:hover::after {
+    opacity: 1;
+}
+
+/* Card Image Container */
+.da-card-img {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    height: 180px;
+}
+
+.da-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.85) saturate(0.9);
+    transition: transform var(--transition-slow), filter var(--transition-base);
+}
+
+.da-card:hover .da-card-img img {
+    transform: scale(1.05);
+    filter: brightness(1) saturate(1);
+}
+
+/* Gradient overlay on image */
+.da-card-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 30%, rgba(8, 8, 12, 0.95) 100%);
+    pointer-events: none;
+}
+
+/* Large title overlay on image */
+.da-card-img-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-orange);
+    text-shadow: 0 0 40px var(--color-orange-glow);
+    z-index: 1;
+}
+
+/* Card Body */
+.da-card-body {
+    flex: 1;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tag Badge */
+.da-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-orange);
+    padding: 0.35rem 0.6rem;
+    background: var(--color-orange-subtle);
+    border: 1px solid var(--color-border);
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    /* Cut corner on tag */
+    clip-path: polygon(
+        0 0, calc(100% - 5px) 0, 100% 5px, 
+        100% 100%, 5px 100%, 0 calc(100% - 5px)
+    );
+}
+
+.da-card-tag-icon {
+    font-size: 0.9rem;
+}
+
+/* Card Title */
+.da-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+}
+
+.da-card:hover .da-card-title {
+    color: var(--color-orange);
+}
+
+/* Card Excerpt */
+.da-card-excerpt {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Card Footer */
+.da-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.da-card-meta {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-dim);
+    display: flex;
+    gap: 0.75rem;
+}
+
+.da-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Arrow Button - Sci-Fi Style */
+.da-card-arrow {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    color: var(--color-orange);
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+    /* Cut corner on arrow */
+    clip-path: polygon(
+        0 0, calc(100% - 6px) 0, 100% 6px, 
+        100% 100%, 6px 100%, 0 calc(100% - 6px)
+    );
+}
+
+.da-card:hover .da-card-arrow {
+    background: var(--color-orange);
+    color: var(--color-bg-deep);
+    border-color: var(--color-orange);
+}
+
+/* Card Variants */
+.da-card--primary .da-card-img {
+    height: 280px;
+}
+
+.da-card--primary .da-card-body {
+    padding: 1.75rem;
+}
+
+.da-card--primary .da-card-title {
+    font-size: 1.35rem;
+}
+
+/* Card without image */
+.da-card--compact .da-card-img {
+    display: none;
+}
+
+/* ==========================================================================
+   SECTION LABEL - "Archives" / "Featured" style
+   Usage: <span class="da-section-label">Archives</span>
+   ========================================================================== */
+
+.da-section-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-orange);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.da-section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--color-orange);
+}
+
+/* ==========================================================================
+   SECTION TITLE - Orbitron display font
+   Usage: <h2 class="da-section-title">Tous les articles</h2>
+   ========================================================================== */
+
+.da-section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--color-text);
+}
+
+/* ==========================================================================
+   FEATURED GRID - 3 Cards Layout
+   Usage: <div class="da-featured-grid">...</div>
+   ========================================================================== */
+
+.da-featured-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: repeat(2, 280px);
+    gap: 1.25rem;
+    max-width: 1200px;
+}
+
+.da-featured-grid .da-card--primary {
+    grid-row: span 2;
+}
+
+.da-featured-grid .da-card--primary .da-card-img {
+    height: 55%;
+}
+
+.da-featured-grid .da-card:not(.da-card--primary) .da-card-img {
+    height: 120px;
+}
+
+.da-featured-grid .da-card:not(.da-card--primary) .da-card-excerpt {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .da-featured-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+    
+    .da-featured-grid .da-card--primary {
+        grid-row: span 1;
+    }
+    
+    .da-featured-grid .da-card--primary .da-card-img {
+        height: 220px;
+    }
+    
+    .da-featured-grid .da-card:not(.da-card--primary) .da-card-img {
+        height: 140px;
+    }
+}
+
+/* ==========================================================================
+   ANIMATION UTILITIES
+   Usage: Add to elements for entrance animations
+   ========================================================================== */
+
+.da-anim-up {
+    animation: da-fadeUp 0.8s ease both;
+}
+
+.da-anim-down {
+    animation: da-fadeDown 0.8s ease both;
+}
+
+.da-anim-in {
+    animation: da-fadeIn 0.8s ease both;
+}
+
+/* Staggered delays */
+.da-delay-1 { animation-delay: 0.1s; }
+.da-delay-2 { animation-delay: 0.2s; }
+.da-delay-3 { animation-delay: 0.3s; }
+.da-delay-4 { animation-delay: 0.4s; }
+.da-delay-5 { animation-delay: 0.5s; }
+.da-delay-6 { animation-delay: 0.6s; }
+.da-delay-7 { animation-delay: 0.7s; }
+
+/* ==========================================================================
+   GLOW EFFECTS
+   ========================================================================== */
+
+.da-glow {
+    box-shadow: var(--glow-orange);
+}
+
+.da-glow-text {
+    text-shadow: var(--glow-text);
+}
+
+.da-glow-pulse {
+    animation: da-glow 2s ease-in-out infinite;
+}
