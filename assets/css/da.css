@@ -220,6 +220,7 @@
     color: inherit;
     transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
     border: 1px solid var(--color-border);
+    min-height: 280px;
 }
 
 .da-card:hover {
@@ -412,10 +413,11 @@
 .da-featured-grid {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
-    grid-template-rows: repeat(2, 220px);
+    grid-auto-rows: minmax(320px, max-content);
     gap: 1.25rem;
     max-width: 1200px;
     width: 100%;
+    align-items: stretch;
 }
 
 .da-featured-grid .da-card--primary {

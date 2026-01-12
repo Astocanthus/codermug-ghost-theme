@@ -516,7 +516,7 @@ body.home-template .site-footer {
 .home-featured-grid {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
-    grid-template-rows: repeat(2, 200px);
+    grid-template-rows: repeat(2, minmax(240px, auto));
     gap: 1.25rem;
 }
 
