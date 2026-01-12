@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{@site.locale}}"{{#is "home"}} class="home-template"{{/is}}{{#is "page" slug="about"}} class="page-about"{{/is}}>
+<html lang="{{@site.locale}}"{{#is "home"}} class="home-template"{{/is}}{{#is "page" slug="about"}} class="page-about"{{/is}}{{#is "page" slug="account"}} class="page-account"{{/is}}>
 
 <head>
   {{!-- Document Settings --}}
@@ -85,7 +85,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a href="{{@site.url}}/about/" class="nav-link {{#is "page" slug="about"}}active{{/is}}">À propos</a>
+            <a href="{{@site.url}}/about/" class="nav-link {{link_class for="/about/" activeClass="active"}}">À propos</a>
           </li>
         </ul>
       </nav>
@@ -100,7 +100,7 @@
         </button>
 
         {{#if @member}}
-        <a href="/account" class="btn-ghost">Mon compte</a>
+        <a href="/account" class="btn-ghost {{link_class for="/account/" activeClass="active"}}"">Mon compte</a>
         {{else}}
         <a href="#/portal/signin" class="btn-ghost">Log in</a>
         <a href="#/portal/signup" class="btn-primary">S'abonner</a>
@@ -185,7 +185,7 @@
 
 {{!-- Footer only on non-home and non-about pages --}}
 {{^is "home"}}
-{{^is "page" slug="about"}}
+  {{^has slug="about"}}
   <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-container">
@@ -228,7 +228,7 @@
       </div>
     </div>
   </footer>
-{{/is}}
+  {{/has}}
 {{/is}}
 
   <script src="{{asset "js/navigation.js"}}"></script>
