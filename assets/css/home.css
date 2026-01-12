@@ -121,6 +121,12 @@ body.home-template .site-footer {
     max-width: 900px;
 }
 
+/* Articles section - specific container width */
+.home-articles .home-section-container {
+    max-width: 900px;
+}
+
+
 /* ==========================================================================
    ANIMATION ITEMS
    Elements animate IN when section becomes active, then STAY visible forever.
@@ -956,10 +962,6 @@ body.home-template .site-footer {
     align-items: flex-end;
     justify-content: space-between;
     margin-bottom: 2rem;
-    max-width: 900px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .home-articles-pagination {

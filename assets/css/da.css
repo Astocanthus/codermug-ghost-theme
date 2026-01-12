@@ -572,7 +572,7 @@
     position: relative;
     text-decoration: none;
     color: inherit;
-    transition: padding var(--transition-fast);
+    transition: padding var(--transition-fast) !important;
     counter-increment: article-counter;
 }
 
@@ -585,12 +585,11 @@
     bottom: 0;
     width: 2px;
     background: transparent;
-    transition: background var(--transition-fast), box-shadow var(--transition-fast);
+    transition: background var(--transition-fast);
 }
 
 .da-article-row:hover::before {
     background: var(--color-orange);
-    box-shadow: 0 0 8px var(--color-orange-glow);
 }
 
 .da-article-row:hover {
@@ -628,6 +627,7 @@
     font-weight: 500;
     color: var(--color-text);
     transition: color var(--transition-fast);
+    margin: 0;
 }
 
 .da-article-row:hover .da-article-title {

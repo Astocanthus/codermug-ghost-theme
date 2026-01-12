@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
        ARTICLES PAGINATION
        ========================================================================== */
 
-    var articleRows = document.querySelectorAll('.home-article-row');
+    var articleRows = document.querySelectorAll('.da-article-row');
     var prevBtn = document.getElementById('prevBtn');
     var nextBtn = document.getElementById('nextBtn');
     var paginationInfo = document.getElementById('paginationInfo');
