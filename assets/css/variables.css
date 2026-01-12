@@ -48,8 +48,8 @@
   --color-bg-secondary: #12121a;
   --color-bg-elevated: #1a1a25;
   
-  --color-bg-card: rgba(20, 20, 30, 0.9);
-  --color-bg-card-hover: rgba(30, 30, 45, 0.95);
+  --color-bg-card: rgba(12, 12, 18, 0.85);
+  --color-bg-card-hover: rgba(12, 12, 18, 1);
   --color-bg-content: rgba(15, 15, 22, 0.95);
   --color-bg-terminal: #0a0a0a;
 
