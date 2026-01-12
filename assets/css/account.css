@@ -3,6 +3,36 @@
    ========================================================================== */
 
 /* ==========================================================================
+   PAGE SCROLL RESET - Override home/about overflow restrictions
+   ========================================================================== */
+
+html.page-account {
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    scrollbar-gutter: stable !important;
+    height: auto !important;
+}
+
+body.page-account {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100vh !important;
+}
+
+body.page-account .site-main {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    padding-top: 0 !important;
+}
+
+/* Compensation for fixed header - applied to content-wrapper */
+body.page-account .content-wrapper {
+    margin-top: 120px !important;
+    margin-bottom: var(--spacing-xl) !important;
+}
+
+/* ==========================================================================
    ACCOUNT CONTAINER
    ========================================================================== */
 
@@ -12,7 +42,7 @@
 }
 
 .account-container {
-    padding: var(--spacing-xl) 0;
+    padding: var(--spacing-xl) 0 0 0;
 }
 
 /* ==========================================================================
@@ -391,6 +421,7 @@
     margin-top: var(--spacing-xl);
     padding-top: var(--spacing-xl);
     border-top: 2px solid rgba(255, 60, 60, 0.2);
+    margin-bottom: 0px;
 }
 
 .account-card--danger {
@@ -459,9 +490,13 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
+    body.page-account .content-wrapper {
+        margin-top: 90px !important;
+        padding: var(--spacing-md) !important;
+    }
+
     .account-page {
         margin: 0;
-        padding: var(--spacing-md);
     }
 
     .account-info-grid {

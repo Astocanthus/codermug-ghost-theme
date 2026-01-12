@@ -1,5 +1,26 @@
 {{!< default}}
 
+<style>
+/* Force scroll on account page - inline to ensure priority */
+html, body {
+    overflow: visible !important;
+    overflow-y: scroll !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+.site-main {
+    overflow: visible !important;
+    height: auto !important;
+    padding-top: 100px !important;
+}
+
+.content-wrapper {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+</style>
+
 <div class="content-wrapper account-page">
     {{#if @member}}
     <div class="account-container">
@@ -34,7 +55,7 @@
                     <div class="account-info-item">
                         <span class="account-info-label">Statut</span>
                         <span class="account-info-value account-status {{#if @member.paid}}paid{{else}}free{{/if}}">
-                            {{#if @member.paid}}✓ Abonné{{else}}○ Gratuit{{/if}}
+                            {{#if @member.paid}}Premium{{else}}Gratuit{{/if}}
                         </span>
                     </div>
                     <div class="account-info-item">
@@ -119,62 +140,6 @@
                         Gérer les newsletters
                     </a>
                 </div>
-            </div>
-        </section>
-
-        {{!-- Activity Section --}}
-        <section class="account-section">
-            <div class="account-section-header">
-                <h2 class="account-section-title">
-                    <span class="section-icon">📊</span>
-                    Activité
-                </h2>
-            </div>
-            <div class="account-card">
-                <div class="account-activity">
-                    <div class="activity-stat">
-                        <span class="stat-icon">📖</span>
-                        <div class="stat-content">
-                            <span class="stat-label">Articles disponibles</span>
-                            <span class="stat-value">{{@site.posts_count}}</span>
-                        </div>
-                    </div>
-                    <div class="activity-stat">
-                        <span class="stat-icon">⏱️</span>
-                        <div class="stat-content">
-                            <span class="stat-label">Temps de lecture total</span>
-                            <span class="stat-value">~{{@site.reading_time}} min</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {{!-- Quick Links --}}
-        <section class="account-section">
-            <div class="account-section-header">
-                <h2 class="account-section-title">
-                    <span class="section-icon">🔗</span>
-                    Liens rapides
-                </h2>
-            </div>
-            <div class="account-quick-links">
-                <a href="{{@site.url}}" class="quick-link">
-                    <span class="quick-link-icon">🏠</span>
-                    <span class="quick-link-text">Accueil</span>
-                </a>
-                <a href="{{@site.url}}/tag/k8s-deep-dive/" class="quick-link">
-                    <span class="quick-link-icon">☸️</span>
-                    <span class="quick-link-text">K8S Deep Dive</span>
-                </a>
-                <a href="{{@site.url}}/toolbox/" class="quick-link">
-                    <span class="quick-link-icon">🧰</span>
-                    <span class="quick-link-text">Boîte à outils</span>
-                </a>
-                <a href="{{@site.url}}/about/" class="quick-link">
-                    <span class="quick-link-icon">👨‍💻</span>
-                    <span class="quick-link-text">À propos</span>
-                </a>
             </div>
         </section>
 

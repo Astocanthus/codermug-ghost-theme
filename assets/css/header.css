@@ -117,9 +117,9 @@
 }
 
 .nav-item:nth-child(1) .nav-link { min-width: 95px; }   /* Accueil */
-.nav-item:nth-child(2) .nav-link { min-width: 120px; }  /* Boîte à outils */
-.nav-item:nth-child(3) .nav-link { min-width: 90px; }   /* Séries */
-.nav-item:nth-child(4) .nav-link { min-width: 95px; }   /* À propos */
+.nav-item:nth-child(2) .nav-link { min-width: 120px; }  /* BoÃ®te Ã  outils */
+.nav-item:nth-child(3) .nav-link { min-width: 90px; }   /* SÃ©ries */
+.nav-item:nth-child(4) .nav-link { min-width: 95px; }   /* Ã€ propos */
 
 .nav-link:hover,
 .nav-link.active {
@@ -134,7 +134,7 @@
 }
 
 /* ==========================================================================
-   Dropdown Menu - Séries
+   Dropdown Menu - SÃ©ries
    ========================================================================== */
 
 .nav-item.has-dropdown:hover .nav-link svg {
@@ -271,6 +271,11 @@
 
 .btn-ghost:hover {
   color: var(--color-orange);
+}
+
+.btn-ghost.active {
+  color: var(--color-orange);
+  background: var(--color-orange-subtle);
 }
 
 .btn-primary {
