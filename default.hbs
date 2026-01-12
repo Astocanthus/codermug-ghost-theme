@@ -184,8 +184,10 @@
   </main>
 
 {{!-- Footer only on non-home and non-about pages --}}
-{{^is "home"}}
-  {{^has slug="about"}}
+{{#match body_class "~" "home-template"}}
+{{else}}
+  {{#match body_class "~" "page-about"}}
+  {{else}}
   <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-container">
@@ -228,8 +230,8 @@
       </div>
     </div>
   </footer>
-  {{/has}}
-{{/is}}
+  {{/match}}
+{{/match}}
 
   <script src="{{asset "js/navigation.js"}}"></script>
   <script src="{{asset "js/slogan.js"}}"></script>

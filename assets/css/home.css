@@ -762,47 +762,6 @@ body.home-template .site-footer {
     font-weight: 500;
 }
 
-.home-toolbox-examples {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-bottom: 2.5rem;
-}
-
-.toolbox-tag {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: var(--color-orange-soft);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
-}
-
-.toolbox-tag:hover {
-    border-color: var(--color-orange);
-    color: var(--color-orange);
-}
-
-.home-toolbox-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--color-orange);
-    padding: 0.75rem 1.5rem;
-    border: 1px solid var(--color-border-strong);
-    transition: all var(--transition-base);
-}
-
-.home-toolbox-cta:hover {
-    background: var(--color-orange);
-    color: var(--color-bg);
-    border-color: var(--color-orange);
-}
-
 /* ==========================================================================
    SECTION 4: LEARNING PATH
    ========================================================================== */
@@ -943,10 +902,6 @@ body.home-template .site-footer {
     font-size: 0.75rem;
 }
 
-.home-notify-form .home-cta-btn {
-    width: 100%;
-    max-width: 200px;
-}
 
 /* ==========================================================================
    SECTION 5: ARTICLES LIST
