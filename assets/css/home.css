@@ -867,15 +867,15 @@ body.home-template .site-footer {
 
 .home-notify-form {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 1.25rem;
-    max-width: 380px;
+    gap: 1rem;
+    max-width: 600px;
     margin: 0 auto;
 }
 
 .notify-input {
-    width: 100%;
+    flex: 1;
     padding: 1.1rem 1.5rem;
     background: rgba(10, 10, 15, 0.9);
     border: 1px solid var(--color-border-hover);
@@ -1247,6 +1247,7 @@ body.home-template .site-footer {
     }
 
     .home-notify-form {
+        flex-direction: column;
         max-width: 300px;
     }
     
