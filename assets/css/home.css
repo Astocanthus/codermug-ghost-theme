@@ -1,6 +1,6 @@
 /* ==========================================================================
    Codermug Theme - Home Page Styles (Magnetic Scroll Landing)
-   FIXED: Title animation, no fadeout, article alignment
+   FIXED: Responsive featured section with flexible card heights
    ========================================================================== */
 
 /* ==========================================================================
@@ -510,124 +510,74 @@ body.home-template .site-footer {
 
 .home-featured {
     flex-direction: column;
-    padding-top: 80px;
 }
 
-.home-featured-grid {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    grid-template-rows: repeat(2, minmax(240px, auto));
-    gap: 1.25rem;
-}
-
-.home-featured-card {
-    position: relative;
-    background: var(--color-bg-card);
-    backdrop-filter: blur(8px);
+/* Container must not exceed viewport to prevent header overlap */
+.home-featured .home-section-container {
     display: flex;
     flex-direction: column;
+    max-height: 85vh; /* Leave space for fixed header */
+    height: auto;
+}
+
+.home-featured .home-section-header {
+    flex-shrink: 0; /* Header keeps its size */
+    margin-bottom: 1.5rem;
+}
+
+/* Grid adapts to remaining space */
+.home-featured .da-featured-grid {
+    flex: 1;
+    min-height: 0; /* Allow flexbox to shrink */
     overflow: hidden;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
-    border: 1px solid var(--color-border);
+    /* Override da.css rules */
+    grid-template-rows: 1fr 1fr !important; /* Equal rows that share available space */
+    grid-auto-rows: auto !important;
+    height: 100% !important; /* Use all available flex space */
 }
 
-.home-featured-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--color-orange);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), var(--glow-orange);
+/* Cards adapt to grid cell height */
+.home-featured .da-featured-grid .da-card {
+    height: 100%;
+    min-height: 0;
 }
 
-.home-featured-card--primary {
+.home-featured .da-featured-grid .da-card--primary .da-card-img {
+    flex: 1 !important;
+    min-height: 200px !important;
+    height: auto !important;
+}
+
+.home-featured .da-featured-grid .da-card:not(.da-card--primary) .da-card-img {
+    height: 120px !important;
+    flex: 0 0 120px !important;
+}
+
+.home-featured .da-card--primary {
     grid-row: span 2;
 }
 
-.featured-card-header {
-    padding: 1.25rem;
+/* Featured cards use flex layout for responsive image sizing */
+.home-featured .da-card {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    flex-direction: column;
+    min-height: 0; /* Allow shrinking */
 }
 
-.featured-card-icon {
-    font-size: 1.5rem;
+.home-featured .da-card-body {
+    flex-shrink: 0; /* Content should keep its size */
 }
 
-.featured-card-series {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-orange);
-    padding: 0.3rem 0.6rem;
-    background: var(--color-orange-subtle);
-    border: 1px solid var(--color-border);
-}
-
-.featured-card-body {
+.home-featured .da-card-img {
     flex: 1;
-    padding: 0 1.25rem;
+    min-height: 120px; /* Minimum image height */
+    overflow: hidden;
 }
 
-.home-featured-card--primary .featured-card-body {
-    padding: 0 1.5rem;
-}
-
-.featured-card-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    line-height: 1.35;
-    margin-bottom: 0.5rem;
-    transition: color var(--transition-fast);
-    color: var(--color-text);
-}
-
-.home-featured-card--primary .featured-card-title {
-    font-size: 1.15rem;
-}
-
-.home-featured-card:hover .featured-card-title {
-    color: var(--color-orange);
-}
-
-.featured-card-excerpt {
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-}
-
-.featured-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.25rem;
-    border-top: 1px solid var(--color-border);
-    margin-top: auto;
-}
-
-.featured-card-meta {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    color: var(--color-text-dim);
-    display: flex;
-    gap: 0.75rem;
-}
-
-.featured-card-arrow {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--color-border);
-    color: var(--color-orange);
-    transition: all var(--transition-fast);
-}
-
-.home-featured-card:hover .featured-card-arrow {
-    background: var(--color-orange);
-    color: var(--color-bg);
-    border-color: var(--color-orange);
+.home-featured .da-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* ==========================================================================
@@ -1135,13 +1085,25 @@ body.home-template .site-footer {
    ========================================================================== */
 
 @media (max-width: 1024px) {
-    .home-featured-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
+    .home-featured {
+        min-height: auto;
+        max-height: none;
+        height: auto;
     }
     
-    .home-featured-card--primary {
+    .home-featured .da-featured-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        height: auto;
+    }
+    
+    .home-featured .da-card--primary {
         grid-row: span 1;
+    }
+    
+    .home-featured .da-card-img {
+        height: 220px;
+        flex: none;
     }
 
     .home-series-grid {
@@ -1210,12 +1172,12 @@ body.home-template .site-footer {
         min-height: auto;
     }
 
-    .home-featured-grid {
+    .home-featured .da-featured-grid {
         gap: 1rem;
     }
-
-    .featured-card-body {
-        padding: 0 1rem;
+    
+    .home-featured .da-card-img {
+        height: 180px;
     }
 
     .home-series {

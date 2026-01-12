@@ -184,9 +184,9 @@
 }
 
 /* ==========================================================================
-   FEATURED CARD - Simple border approach (v4 style)
+   FEATURED CARD - Flexible layout with variants
    Usage:
-   <a href="#" class="da-card">
+   <a href="#" class="da-card [da-card--primary] [da-card--fixed] [da-card--compact]">
        <div class="da-card-corner da-card-corner--tl">
            <svg viewBox="0 0 20 20"><path d="M0 20V0h20" /></svg>
        </div>
@@ -198,7 +198,7 @@
        </div>
        <div class="da-card-body">
            <span class="da-card-tag"><span class="da-card-tag-icon">☸️</span> K8S Deep Dive</span>
-           <h3 class="da-card-title">[4/32] : API Server — Throttling</h3>
+           <h3 class="da-card-title">[4/32] : API Server – Throttling</h3>
            <p class="da-card-excerpt">Description here...</p>
            <div class="da-card-footer">
                <div class="da-card-meta"><span>24 déc. 2025</span><span>23 min</span></div>
@@ -220,7 +220,6 @@
     color: inherit;
     transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
     border: 1px solid var(--color-border);
-    min-height: 280px;
 }
 
 .da-card:hover {
@@ -387,11 +386,45 @@
     border-color: var(--color-orange);
 }
 
-/* Card Variants - Primary (large) */
-.da-card--primary .da-card-img {
-    height: 50%;
+/* ==========================================================================
+   CARD VARIANTS - For non-flexible usage (tags, related posts, etc.)
+   ========================================================================== */
+
+/* Standard card with fixed image height - used in tag/author pages */
+.da-card--fixed {
+    min-height: 400px;
 }
 
+.da-card--fixed .da-card-img {
+    height: 200px;
+}
+
+/* Compact card - used in related posts */
+.da-card--compact {
+    min-height: 320px;
+}
+
+.da-card--compact .da-card-img {
+    height: 150px;
+}
+
+.da-card--compact .da-card-body {
+    padding: 1rem;
+}
+
+.da-card--compact .da-card-title {
+    font-size: 0.9rem;
+}
+
+.da-card--compact .da-card-excerpt {
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Primary card modifier (typically the first/main card) */
 .da-card--primary .da-card-body {
     padding: 1.5rem;
 }
@@ -400,14 +433,13 @@
     font-size: 1.15rem;
 }
 
-/* Non-primary cards hide excerpt */
-.da-card:not(.da-card--primary) .da-card-excerpt {
+/* Hide excerpt on non-primary cards when not using variants */
+.da-card:not(.da-card--primary):not(.da-card--fixed):not(.da-card--compact) .da-card-excerpt {
     display: none;
 }
 
 /* ==========================================================================
-   FEATURED GRID - 3 Cards Layout
-   Usage: <div class="da-featured-grid">...</div>
+   FEATURED GRID - Layout container for featured section
    ========================================================================== */
 
 .da-featured-grid {
@@ -424,11 +456,12 @@
     grid-row: span 2;
 }
 
-.da-featured-grid .da-card--primary .da-card-img {
+/* Non-home usage: apply fixed heights */
+.da-featured-grid:not(.home-featured .da-featured-grid) .da-card--primary .da-card-img {
     height: 50%;
 }
 
-.da-featured-grid .da-card:not(.da-card--primary) .da-card-img {
+.da-featured-grid:not(.home-featured .da-featured-grid) .da-card:not(.da-card--primary) .da-card-img {
     height: 90px;
 }
 

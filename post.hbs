@@ -106,47 +106,39 @@
         <h3 class="related-title">Autres articles</h3>
         <div class="related-grid">
           {{#foreach posts}}
-          <article class="article-card">
-            <div class="card-inner">
-              <div class="card-image">
-                {{#if feature_image}}
-                <img src="{{feature_image}}" alt="{{title}}" loading="lazy">
-                <div class="card-image-overlay"></div>
-                {{else}}
-                <div class="card-image-placeholder" data-tag="{{primary_tag.slug}}">
-                  <span class="placeholder-icon"></span>
+          <article class="article-card da-card da-card--compact">
+            <div class="da-card-corner da-card-corner--tl">
+              <svg viewBox="0 0 20 20"><path d="M0 20V0h20" /></svg>
+            </div>
+            <div class="da-card-corner da-card-corner--br">
+              <svg viewBox="0 0 20 20"><path d="M0 20V0h20" /></svg>
+            </div>
+            
+            <div class="da-card-img">
+              {{#if feature_image}}
+              <img src="{{feature_image}}" alt="{{title}}" loading="lazy">
+              {{else}}
+              <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-elevated) 100%);display:flex;align-items:center;justify-content:center;">
+                <span style="font-family:var(--font-display);font-size:clamp(1rem, 3vw, 1.5rem);color:var(--color-orange);text-shadow:var(--glow-text);">{{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}</span>
+              </div>
+              {{/if}}
+            </div>
+            
+            <div class="da-card-body">
+              <span class="da-card-tag">
+                <span class="da-card-tag-icon">💻</span>
+                {{#if primary_tag}}{{primary_tag.name}}{{else}}ARTICLE{{/if}}
+              </span>
+              <h3 class="da-card-title">{{title}}</h3>
+              <p class="da-card-excerpt">{{excerpt words="15"}}</p>
+              
+              <div class="da-card-footer">
+                <div class="da-card-meta">
+                  <span>{{date format="D MMM YYYY"}}</span>
                 </div>
-                {{/if}}
-              </div>
-              <div class="card-header">
-                <span class="card-tag">
-                  {{#if primary_tag}}{{primary_tag.name}}{{else}}ARTICLE{{/if}}
-                </span>
-              </div>
-              <div class="card-content">
-                <h2 class="card-title">
-                  <a href="{{url}}">{{title}}</a>
-                </h2>
-                <p class="card-excerpt">{{excerpt words="15"}}</p>
-              </div>
-              <div class="card-footer">
-                <span class="card-date">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  {{date format="D MMM YYYY"}}
-                </span>
-                <a href="{{url}}" class="card-link">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </a>
+                <span class="da-card-arrow">→</span>
               </div>
             </div>
-            <div class="card-glow"></div>
           </article>
           {{/foreach}}
         </div>
