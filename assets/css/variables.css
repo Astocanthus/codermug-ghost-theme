@@ -58,9 +58,11 @@
      ========================================================================== */
   
   --color-text: #e0e0e0;
-  --color-text-secondary: #888888;
-  --color-text-muted: #666666;
-  --color-text-dim: #444444;
+  --color-text-secondary: #c2c2c2;
+  --color-text-muted: #a1a1a1;
+  --color-text-dim: #6b6b6b;
+  --color-text-intermediate-black: #292929;
+  --color-text-black: #050505;
 
   /* ==========================================================================
      BORDERS
