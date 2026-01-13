@@ -107,7 +107,8 @@ body.home-template .site-footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 6%;
+    padding: 87px 6% 0 6%; /* Top padding = header height (86px + 1px border) */
+    box-sizing: border-box;
     position: relative;
     z-index: 1;
 }
@@ -236,6 +237,7 @@ body.home-template .site-footer {
 
 .home-hero-content {
     max-width: 900px;
+    z-index: 2;
 }
 
 /* Prompt with blinking chevron */
@@ -249,6 +251,9 @@ body.home-template .site-footer {
     opacity: 0;
     transform: translateY(-10px);
     animation: homeAnimDown 0.6s ease 0.2s forwards;
+    text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 0, 0, 0.6);
 }
 
 .prompt-chevron {
@@ -287,15 +292,17 @@ body.home-template .site-footer {
     position: relative;
     display: inline-block;
     vertical-align: baseline;
+    opacity: 0.8;
 }
 
 /* Outline text */
 .title-outline {
-    color: transparent;
-    -webkit-text-stroke: 2px var(--color-text-dim);
+    color: var(--color-text-black);
+    -webkit-text-stroke: 2px var(--color-text-intermediate-black);
     position: relative;
     display: inline-block;
     vertical-align: baseline;
+    opacity: 0.8;
 }
 
 /* Glitch layer - hidden by default, positioned absolute for hover effect */
@@ -334,6 +341,10 @@ body.home-template .site-footer {
 /* On hover - letters shimmer effect */
 .home-hero-title:hover .title-fill {
     animation: titleShimmer 0.15s ease-in-out infinite;
+        text-shadow: 
+        0 0 40px var(--color-orange-glow),
+        0 0 80px hsla(var(--hue-orange), 100%, 50%, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.9); /* Ajout ombre noire */
 }
 
 .home-hero-title:hover .title-outline {
@@ -403,6 +414,9 @@ body.home-template .site-footer {
     font-size: clamp(1rem, 2vw, 1.2rem);
     color: var(--color-text-secondary);
     line-height: 1.8;
+        text-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.9),
+        0 0 15px rgba(0, 0, 0, 0.7);
 }
 
 .home-hero-desc strong {
@@ -458,27 +472,6 @@ body.home-template .site-footer {
     border-color: var(--color-orange);
 }
 
-/* Scroll Indicator */
-.home-scroll-indicator {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    opacity: 0;
-    animation: homeAnimIn 0.6s ease 1.2s forwards;
-}
-
-.scroll-text {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-text-dim);
-}
 
 .scroll-line {
     width: 1px;
@@ -500,10 +493,6 @@ body.home-template .site-footer {
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes homeAnimIn {
-    to { opacity: 1; }
-}
-
 /* ==========================================================================
    SECTION 1: FEATURED ARTICLES
    ========================================================================== */
@@ -512,11 +501,11 @@ body.home-template .site-footer {
     flex-direction: column;
 }
 
-/* Container must not exceed viewport to prevent header overlap */
+/* Container must not exceed available viewport (100vh - header 87px) */
 .home-featured .home-section-container {
     display: flex;
     flex-direction: column;
-    max-height: 85vh; /* Leave space for fixed header */
+    max-height: calc(100vh - 87px - 4rem); /* 100vh - header - margins */
     height: auto;
 }
 
@@ -686,12 +675,6 @@ body.home-template .site-footer {
     margin: 0 auto;
 }
 
-.home-toolbox-icon {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-    filter: drop-shadow(0 0 20px var(--color-orange-glow));
-}
-
 .home-toolbox-title {
     font-family: var(--font-display);
     font-size: clamp(1.8rem, 5vw, 2.5rem);
@@ -859,7 +842,6 @@ body.home-template .site-footer {
 
 .home-articles {
     flex-direction: column;
-    padding-top: 80px;
 }
 
 .home-articles-header {
@@ -1252,10 +1234,6 @@ body.home-template .site-footer {
 @media (max-width: 480px) {
     .home-hero-title {
         font-size: clamp(2rem, 15vw, 3rem);
-    }
-
-    .home-toolbox-icon {
-        font-size: 3rem;
     }
 
     .toolbox-tag {
