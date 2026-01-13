@@ -127,7 +127,6 @@ body {
   z-index: 10;
   background: transparent !important;
 
-  min-height: 100vh;
   padding-top: var(--spacing-xl);
   padding-bottom: var(--spacing-xl);
 }
@@ -205,41 +204,6 @@ body {
    Styles Cartes (Inchangés)
    ========================================================================== */
 
-.article-card {
-  position: relative;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  transition: transform var(--transition-base);
-  animation: fadeIn 0.5s ease forwards;
-}
-
-.article-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.article-card:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.article-card:nth-child(3) {
-  animation-delay: 0.2s;
-}
-
-.article-card:nth-child(4) {
-  animation-delay: 0.25s;
-}
-
-.article-card:nth-child(5) {
-  animation-delay: 0.3s;
-}
-
-.article-card:nth-child(6) {
-  animation-delay: 0.35s;
-}
-
-.article-card:hover {
-  transform: translateY(-5px);
-}
 
 .card-inner {
   position: relative;
@@ -255,12 +219,6 @@ body {
   overflow: hidden;
 }
 
-.article-card:hover .card-inner {
-  background: var(--color-bg-card-hover);
-  border-color: var(--color-border-hover);
-  box-shadow: var(--glow-orange);
-}
-
 .card-image {
   position: relative;
   width: 100%;
@@ -274,10 +232,6 @@ body {
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-slow);
-}
-
-.article-card:hover .card-image img {
-  transform: scale(1.05);
 }
 
 .card-image-overlay {
@@ -341,15 +295,6 @@ body {
   height: 28px;
   stroke: var(--color-orange);
   transition: all var(--transition-base);
-}
-
-.article-card:hover .card-icon {
-  border-color: var(--color-orange);
-  box-shadow: var(--glow-orange);
-}
-
-.article-card:hover .card-icon svg {
-  filter: drop-shadow(0 0 8px var(--color-orange-glow));
 }
 
 .card-content {
@@ -459,10 +404,6 @@ body {
   transition: opacity var(--transition-base);
   pointer-events: none;
   z-index: 0;
-}
-
-.article-card:hover .card-glow {
-  opacity: 0.3;
 }
 
 .pagination {
