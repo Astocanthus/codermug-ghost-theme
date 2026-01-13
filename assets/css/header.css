@@ -11,6 +11,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border);
+  height: 87px; /* Fixed height: 86px content + 1px border */
 }
 
 .header-container {
@@ -21,6 +22,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-lg);
+  height: 100%;
 }
 
 /* Logo */
@@ -117,9 +119,9 @@
 }
 
 .nav-item:nth-child(1) .nav-link { min-width: 95px; }   /* Accueil */
-.nav-item:nth-child(2) .nav-link { min-width: 120px; }  /* BoÃ®te Ã  outils */
-.nav-item:nth-child(3) .nav-link { min-width: 90px; }   /* SÃ©ries */
-.nav-item:nth-child(4) .nav-link { min-width: 95px; }   /* Ã€ propos */
+.nav-item:nth-child(2) .nav-link { min-width: 120px; }  /* Boite à outils */
+.nav-item:nth-child(3) .nav-link { min-width: 90px; }   /* Séries */
+.nav-item:nth-child(4) .nav-link { min-width: 95px; }   /* À propos */
 
 .nav-link:hover,
 .nav-link.active {
@@ -134,7 +136,7 @@
 }
 
 /* ==========================================================================
-   Dropdown Menu - SÃ©ries
+   Dropdown Menu - Stories
    ========================================================================== */
 
 .nav-item.has-dropdown:hover .nav-link svg {
