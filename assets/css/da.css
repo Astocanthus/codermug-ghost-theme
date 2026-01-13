@@ -2,6 +2,53 @@
    Codermug Theme - Direction Artistique (da.css)
    ========================================================================== */
 
+
+.highlight {
+    color: var(--color-text);
+    position: relative;
+}
+
+.highlight::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--color-orange);
+    box-shadow: 0 0 8px var(--color-orange-glow);
+}
+
+.da-scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+}
+
+.da-scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--color-orange), transparent);
+    animation: da-scroll-pulse 2s ease-in-out infinite;
+}
+
+.da-scroll-text {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+}
+
 /* ==========================================================================
    ANIMATIONS - Keyframes
    ========================================================================== */
@@ -41,6 +88,11 @@
 @keyframes da-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
+}
+
+@keyframes da-scroll-pulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.5; transform: scaleY(0.6); }
 }
 
 @keyframes da-glow {
@@ -593,7 +645,7 @@
     display: flex;
     flex-direction: column;
     max-width: 900px;
-    min-height: 500px;
+    min-height: 416px;
     counter-reset: article-counter;
 }
 

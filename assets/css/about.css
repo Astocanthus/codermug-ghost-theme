@@ -295,33 +295,6 @@ body.page-template-page-about .circuit-background {
     color: var(--color-text);
 }
 
-.about-scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-}
-
-.about-scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--color-orange), transparent);
-    animation: about-scroll-pulse 2s ease-in-out infinite;
-}
-
-@keyframes about-scroll-pulse {
-    0%, 100% { opacity: 1; transform: scaleY(1); }
-    50% { opacity: 0.5; transform: scaleY(0.6); }
-}
-
 /* ==========================================================================
    TERMINAL SECTION
    ========================================================================== */
