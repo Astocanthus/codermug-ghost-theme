@@ -1,0 +1,402 @@
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+</script>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+  // --- CONFIGURATION ---
+  const CONFIG = {
+    COLOR_MAIN: 0xff8c00,    // Orange circuit
+    COLOR_GLOW: 0xffaa00,    
+    COLOR_COFFEE: 0x4a2505,  // Marron chaud
+    BG_COLOR: 0x050508,      
+    
+    BLOOM_STRENGTH: 1.3,     
+    BLOOM_RADIUS: 0.5,
+    BLOOM_THRESHOLD: 0.1,
+    
+    MUG_RADIUS: 4,
+    MUG_HEIGHT: 10,
+    
+    COFFEE_LEVEL_OFFSET: 3.5, 
+    
+    TILT_ANGLE: Math.PI / 14, // ~12 degrés
+    
+    PRECESSION_SPEED: 0.8,
+  };
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance", alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // --- DOM MOUNTING ---
+  const container = document.getElementById('mug-background');
+  if (container) {
+    while (container.firstChild) container.removeChild(container.firstChild);
+    container.appendChild(renderer.domElement);
+  } else {
+    // Fallback si le conteneur n'est pas trouvé
+    renderer.domElement.style.position = 'fixed';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
+    renderer.domElement.style.zIndex = '-1';
+    document.body.appendChild(renderer.domElement);
+  }
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(CONFIG.BG_COLOR);
+  scene.fog = new THREE.Fog(CONFIG.BG_COLOR, 15, 60);
+
+  const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 14, 22); 
+
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+
+  // Déclaration explicite du BloomPass pour l'utiliser dans l'animate
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    CONFIG.BLOOM_STRENGTH,
+    CONFIG.BLOOM_RADIUS,
+    CONFIG.BLOOM_THRESHOLD
+  );
+  composer.addPass(bloomPass);
+
+  // --- MATERIAUX ---
+  
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: CONFIG.COLOR_MAIN,
+    transparent: true,
+    opacity: 0.95,
+    blending: THREE.AdditiveBlending
+  });
+
+  const surfaceMaterial = new THREE.MeshBasicMaterial({
+    color: CONFIG.COLOR_MAIN,
+    transparent: true,
+    opacity: 0.02, 
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  // --- SOL / TABLE FIXE ---
+  const gridSize = 60; 
+  const gridDivisions = 20; 
+  const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x442200, 0x442200);
+  gridHelper.position.y = 0.05; 
+  gridHelper.material.transparent = true;
+  gridHelper.material.opacity = 0.25; 
+  gridHelper.material.blending = THREE.AdditiveBlending;
+  scene.add(gridHelper);
+
+  const planeGeo = new THREE.PlaneGeometry(200, 200);
+  planeGeo.rotateX(-Math.PI / 2);
+  const planeMat = new THREE.MeshBasicMaterial({ 
+    color: CONFIG.COLOR_MAIN, 
+    transparent: true, 
+    opacity: 0.03, 
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+  const plane = new THREE.Mesh(planeGeo, planeMat);
+  plane.position.y = -0.05; 
+  scene.add(plane);
+
+
+  // --- TEXTURES ---
+  function createShapeTexture(type) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    const w = 64, h = 64;
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#ffaa44'; 
+    ctx.fillStyle = 'rgba(255, 170, 68, 0.1)'; 
+    if (type === 'circle') {
+      ctx.beginPath(); ctx.arc(w/2, h/2, w*0.35, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    } else if (type === 'triangle') {
+      ctx.beginPath(); ctx.moveTo(w/2, h*0.2); ctx.lineTo(w*0.8, h*0.8); ctx.lineTo(w*0.2, h*0.8); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    return new THREE.CanvasTexture(canvas);
+  }
+  const circleTex = createShapeTexture('circle');
+  const triangleTex = createShapeTexture('triangle');
+
+  // --- MUG ---
+  function createMugWireframe() {
+    const group = new THREE.Group();
+    const circleResolution = 64; 
+    const verticalStruts = 24;
+
+    function createRing(yPos, radius) {
+      const points = [];
+      for (let i = 0; i <= circleResolution; i++) {
+        const theta = (i / circleResolution) * Math.PI * 2;
+        points.push(new THREE.Vector3(Math.cos(theta) * radius, yPos, Math.sin(theta) * radius));
+      }
+      return new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), lineMaterial);
+    }
+
+    // Haut et Bas
+    group.add(createRing(CONFIG.MUG_HEIGHT / 2, CONFIG.MUG_RADIUS));
+    group.add(createRing(-CONFIG.MUG_HEIGHT / 2, CONFIG.MUG_RADIUS));
+
+    // Fond Rayons
+    const bottomCenter = new THREE.Vector3(0, -CONFIG.MUG_HEIGHT / 2, 0);
+    const spokePoints = [];
+    for (let i = 0; i < verticalStruts; i++) {
+      const theta = (i / verticalStruts) * Math.PI * 2;
+      const x = Math.cos(theta) * CONFIG.MUG_RADIUS;
+      const z = Math.sin(theta) * CONFIG.MUG_RADIUS;
+      spokePoints.push(bottomCenter.clone());
+      spokePoints.push(new THREE.Vector3(x, -CONFIG.MUG_HEIGHT / 2, z));
+    }
+    group.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(spokePoints), lineMaterial));
+
+    // Montants
+    const strutPoints = [];
+    for (let i = 0; i < verticalStruts; i++) {
+      const theta = (i / verticalStruts) * Math.PI * 2;
+      const x = Math.cos(theta) * CONFIG.MUG_RADIUS;
+      const z = Math.sin(theta) * CONFIG.MUG_RADIUS;
+      strutPoints.push(new THREE.Vector3(x, -CONFIG.MUG_HEIGHT / 2, z));
+      strutPoints.push(new THREE.Vector3(x, CONFIG.MUG_HEIGHT / 2, z));
+    }
+    group.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(strutPoints), lineMaterial));
+
+    // Anse
+    const curve = new THREE.CubicBezierCurve3(
+      new THREE.Vector3(CONFIG.MUG_RADIUS, 2, 0),
+      new THREE.Vector3(CONFIG.MUG_RADIUS + 3.5, 3.5, 0),
+      new THREE.Vector3(CONFIG.MUG_RADIUS + 3.5, -3.5, 0),
+      new THREE.Vector3(CONFIG.MUG_RADIUS, -2, 0)
+    );
+    const tubeGeo = new THREE.TubeGeometry(curve, 24, 0.6, 6, false);
+    group.add(new THREE.LineSegments(new THREE.EdgesGeometry(tubeGeo), lineMaterial));
+
+    // Corps Transparent
+    const bodyGeo = new THREE.CylinderGeometry(CONFIG.MUG_RADIUS, CONFIG.MUG_RADIUS, CONFIG.MUG_HEIGHT, 64, 1, true);
+    const bodyMesh = new THREE.Mesh(bodyGeo, surfaceMaterial);
+    bodyMesh.scale.set(0.995, 0.995, 0.995); 
+    group.add(bodyMesh);
+    
+    return group;
+  }
+
+  // --- LIQUIDE ET FUMÉE ---
+  let bubbles = []; 
+  let steamParticles = [];
+
+  function createLiquid() {
+    const group = new THREE.Group();
+    
+    // Liquide OPAQUE (Cylindre plat) pour éviter les glitchs visuels
+    const liquidGeo = new THREE.CylinderGeometry(CONFIG.MUG_RADIUS - 0.1, CONFIG.MUG_RADIUS - 0.1, 0.1, 64);
+    
+    const liquidMat = new THREE.MeshLambertMaterial({
+      color: CONFIG.COLOR_COFFEE,
+      transparent: false, 
+    });
+    group.add(new THREE.Mesh(liquidGeo, liquidMat));
+
+    // Liseré
+    const pts = [];
+    for(let i=0; i<=64; i++) {
+      const t = (i/64)*Math.PI*2;
+      pts.push(new THREE.Vector3(Math.cos(t)*(CONFIG.MUG_RADIUS-0.1), 0.06, Math.sin(t)*(CONFIG.MUG_RADIUS-0.1)));
+    }
+    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({
+      color: 0xffaa44, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending
+    })));
+
+    // Bulles
+    const bubbleCount = 5;
+    for(let i=0; i<bubbleCount; i++) {
+      const r = 0.2 + Math.random() * 0.4;
+      const bubbleGeo = new THREE.RingGeometry(r, r + 0.05, 16);
+      bubbleGeo.rotateX(-Math.PI / 2);
+      const bubbleMesh = new THREE.Mesh(bubbleGeo, new THREE.MeshBasicMaterial({
+        color: 0xffcc88, transparent: true, opacity: 0.4, side: THREE.DoubleSide
+      }));
+      const dist = Math.random() * (CONFIG.MUG_RADIUS - 1.5);
+      const ang = Math.random() * Math.PI * 2;
+      bubbleMesh.position.set(Math.cos(ang)*dist, 0.08, Math.sin(ang)*dist); 
+      group.add(bubbleMesh);
+      bubbles.push({ mesh: bubbleMesh, baseX: bubbleMesh.position.x, baseZ: bubbleMesh.position.z, speed: 1 + Math.random() });
+    }
+
+    // FUMÉE
+    const steamCount = 30; 
+    const steamMat = new THREE.SpriteMaterial({ map: circleTex, color: 0xffaa44, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false });
+    const steamMatTri = new THREE.SpriteMaterial({ map: triangleTex, color: 0xff8c00, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false });
+
+    for(let i=0; i<steamCount; i++) {
+      const isTri = Math.random() > 0.5;
+      const sprite = new THREE.Sprite(isTri ? steamMatTri : steamMat);
+      resetSteamParticleLocal(sprite);
+      sprite.position.y = Math.random() * 8; 
+      group.add(sprite);
+      steamParticles.push({ sprite: sprite, speed: 0.02 + Math.random() * 0.03, wobbleSpeed: Math.random() * 2, wobbleAmp: 0.01 + Math.random() * 0.02 });
+    }
+    return { group, mesh: new THREE.Mesh(liquidGeo, liquidMat) }; 
+  }
+
+  function resetSteamParticleLocal(sprite) {
+    const r = Math.random() * (CONFIG.MUG_RADIUS - 1.5);
+    const ang = Math.random() * Math.PI * 2;
+    sprite.position.x = Math.cos(ang) * r;
+    sprite.position.z = Math.sin(ang) * r;
+    sprite.position.y = 0.2; 
+    sprite.scale.setScalar(0.2 + Math.random() * 0.3);
+  }
+
+  // --- HIÉRARCHIE ---
+  
+  const precessionGroup = new THREE.Group();
+  scene.add(precessionGroup);
+  
+  const tiltGroup = new THREE.Group();
+  precessionGroup.add(tiltGroup);
+  
+  const counterSpinGroup = new THREE.Group();
+  tiltGroup.add(counterSpinGroup);
+  
+  const mugObj = createMugWireframe();
+  counterSpinGroup.add(mugObj);
+  
+  const liquidObj = createLiquid();
+  precessionGroup.add(liquidObj.group); 
+
+  // --- LUMIÈRE ---
+  const light = new THREE.PointLight(CONFIG.COLOR_MAIN, 2, 50);
+  light.position.set(0, 10, 0);
+  scene.add(light);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+
+  // --- PARTICULES FOND ---
+  const particlesGeo = new THREE.BufferGeometry();
+  const particleCount = 1000;
+  const posArray = new Float32Array(particleCount * 3);
+  const speeds = [];
+  for(let i = 0; i < particleCount * 3; i+=3) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 6 + Math.random() * 25;
+    posArray[i] = Math.cos(angle) * radius;
+    posArray[i+1] = (Math.random() - 0.5) * 40;
+    posArray[i+2] = Math.sin(angle) * radius;
+    speeds.push(0.01 + Math.random() * 0.03); 
+  }
+  particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  const particlesMesh = new THREE.Points(particlesGeo, new THREE.PointsMaterial({
+    size: 0.12, color: CONFIG.COLOR_GLOW, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
+  }));
+  scene.add(particlesMesh);
+
+  // --- ANIMATION ---
+  const clock = new THREE.Clock();
+  const R = CONFIG.MUG_RADIUS;
+  const H = CONFIG.MUG_HEIGHT;
+
+  let accumulatedPrecession = 0;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const time = clock.getElapsedTime();
+
+    // CAMÉRA
+    const camX = Math.sin(time * 0.3) * 7.0; 
+    const camY = 14 + Math.cos(time * 0.25) * 4.0; 
+    const camZ = 22 + Math.sin(time * 0.2) * 3.0;
+    camera.position.set(camX, camY, camZ);
+    const targetX = Math.sin(time * 0.15) * 2.0; 
+    const targetY = 7 + Math.cos(time * 0.2) * 1.0; 
+    camera.lookAt(targetX, targetY, 0);
+
+    // ANIMATION MUG : ALÉATOIRE
+    const wobble1 = Math.sin(time * 1.2);
+    const wobble2 = Math.cos(time * 0.7);
+    const wobble3 = Math.sin(time * 0.3);
+    
+    const randomTilt = CONFIG.TILT_ANGLE + (wobble1 * 0.02 + wobble2 * 0.015 + wobble3 * 0.01);
+    const currentTilt = Math.max(0.05, Math.abs(randomTilt)); 
+
+    const currentSpeed = 0.5 + (currentTilt * 2.0) + (wobble2 * 0.2); 
+    
+    accumulatedPrecession += currentSpeed * 0.016;
+    
+    precessionGroup.rotation.y = accumulatedPrecession;
+    tiltGroup.rotation.x = currentTilt;
+    counterSpinGroup.rotation.y = -accumulatedPrecession; 
+
+    // Physique de contact au sol
+    const contactY = (H/2) * Math.cos(currentTilt) + R * Math.sin(currentTilt);
+    const VISUAL_GROUND_OFFSET = 0.5;
+    precessionGroup.position.y = contactY - VISUAL_GROUND_OFFSET; 
+    
+    const shiftZ = (H/2) * Math.sin(currentTilt) - R * Math.cos(currentTilt);
+    tiltGroup.position.z = -shiftZ;
+
+    // LIQUIDE
+    const liquidY = CONFIG.COFFEE_LEVEL_OFFSET * Math.cos(currentTilt);
+    const liquidZ = CONFIG.COFFEE_LEVEL_OFFSET * Math.sin(currentTilt) - shiftZ;
+    
+    liquidObj.group.position.set(0, liquidY, liquidZ);
+    
+    const cosTilt = Math.cos(currentTilt);
+    const scaleZ = (Math.abs(cosTilt) > 0.001) ? 1 / cosTilt : 100;
+    
+    liquidObj.group.scale.set(1, 1, scaleZ);
+
+    // FUMÉE
+    steamParticles.forEach(p => {
+      p.sprite.position.y += p.speed; 
+      p.sprite.position.x += Math.sin(time * p.wobbleSpeed + p.sprite.position.y) * p.wobbleAmp;
+      const maxH = 12; 
+      const normalizedH = p.sprite.position.y / maxH;
+      let opacity = (normalizedH < 0.1) ? normalizedH * 10 * 0.2 : (1 - normalizedH) * 0.2;
+      p.sprite.material.opacity = Math.max(0, opacity);
+      p.sprite.scale.setScalar(0.2 + normalizedH * 0.3);
+      if (p.sprite.position.y > maxH) resetSteamParticleLocal(p.sprite);
+    });
+
+    bubbles.forEach(b => {
+      const offset = Math.sin(time * b.speed) * 0.5;
+      const waveHeight = Math.sin(b.baseX * 1.5 + time * 3) * 0.02;
+      b.mesh.position.y = waveHeight + 0.08; 
+      b.mesh.position.x = b.baseX + offset * 0.2;
+    });
+
+    const pulse = 1.2 + Math.sin(time * 2.5) * 0.2;
+    bloomPass.strength = CONFIG.BLOOM_STRENGTH * pulse;
+
+    const pPos = particlesGeo.attributes.position.array;
+    for(let i = 0; i < particleCount; i++) {
+      const idx = i * 3;
+      pPos[idx + 1] += speeds[i];
+      if (pPos[idx + 1] > 20) pPos[idx + 1] = -20;
+    }
+    particlesGeo.attributes.position.needsUpdate = true;
+
+    composer.render();
+  }
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  animate();
+</script>
