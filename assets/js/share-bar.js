@@ -100,11 +100,19 @@
     toggleBtns.forEach(btn => btn.classList.toggle('is-active', !isOpen));
     
     // Handle body scroll
-    if (isMobile) {
-      if (isOpen) {
+    if (isOpen) {
+      // Closing - restore scroll
+      if (isMobile) {
         enableBodyScroll();
       } else {
+        document.body.style.overflow = '';
+      }
+    } else {
+      // Opening - prevent scroll
+      if (isMobile) {
         disableBodyScroll();
+      } else {
+        document.body.style.overflow = 'hidden';
       }
     }
   }
@@ -119,7 +127,9 @@
       btn.classList.remove('is-active');
     });
     
+    // Restore scroll for both
     enableBodyScroll();
+    document.body.style.overflow = '';
   }
 
   // Handle resize
