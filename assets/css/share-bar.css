@@ -359,11 +359,18 @@
    SHARE BAR VISIBILITY WITH MODAL OPEN
    ========================================================================== */
 
+/* Scroll lock for both desktop and mobile */
+body.series-nav-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
 /* Keep mobile share bar visible (but behind modal) when series nav is open */
 body.series-nav-open .share-bar--mobile {
   opacity: 1 !important;
   visibility: visible !important;
-  z-index: 9998; /* Just below series nav overlay */
+  z-index: 9998;
 }
 
 /* Disable pointer events to prevent interaction while modal is open */
@@ -408,12 +415,6 @@ body.series-nav-open .share-bar--mobile .share-btn {
 
   .post-full {
     padding-bottom: 80px;
-  }
-
-  body.series-nav-open {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
   }
 }
 

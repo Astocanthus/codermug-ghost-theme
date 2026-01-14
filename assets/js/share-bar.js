@@ -22,7 +22,7 @@
   const CIRCUMFERENCE_MOBILE = 2 * Math.PI * 20;
   const SHOW_THRESHOLD = 300;
 
-  // Store scroll position for iOS
+  // Store scroll position
   let scrollPosition = 0;
 
   // Initialize progress rings
@@ -69,14 +69,14 @@
     });
   }
 
-  // Prevent body scroll (for mobile)
+  // Prevent body scroll
   function disableBodyScroll() {
     scrollPosition = window.scrollY;
     document.body.classList.add('series-nav-open');
     document.body.style.top = `-${scrollPosition}px`;
   }
 
-  // Enable body scroll (for mobile)
+  // Enable body scroll
   function enableBodyScroll() {
     document.body.classList.remove('series-nav-open');
     document.body.style.top = '';
@@ -99,21 +99,13 @@
     // Toggle button active state
     toggleBtns.forEach(btn => btn.classList.toggle('is-active', !isOpen));
     
-    // Handle body scroll
+    // Handle body scroll - Apply for both desktop and mobile
     if (isOpen) {
-      // Closing - restore scroll
-      if (isMobile) {
-        enableBodyScroll();
-      } else {
-        document.body.style.overflow = '';
-      }
+      // Closing
+      enableBodyScroll();
     } else {
-      // Opening - prevent scroll
-      if (isMobile) {
-        disableBodyScroll();
-      } else {
-        document.body.style.overflow = 'hidden';
-      }
+      // Opening
+      disableBodyScroll();
     }
   }
 
@@ -127,9 +119,8 @@
       btn.classList.remove('is-active');
     });
     
-    // Restore scroll for both
+    // Restore scroll
     enableBodyScroll();
-    document.body.style.overflow = '';
   }
 
   // Handle resize
