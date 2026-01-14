@@ -1,0 +1,133 @@
+{{!-- 
+  Share Bar Component
+  Displays social sharing and series navigation
+  Auto-adapts between desktop (fixed right) and mobile (fixed bottom)
+--}}
+
+{{!-- Desktop Share Bar (Fixed Right) --}}
+<div class="share-bar share-bar--desktop" id="shareBarDesktop">
+  {{!-- Scroll to Top with Progress Ring --}}
+  <button 
+    class="share-btn share-btn--scroll" 
+    onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+    title="Retour en haut"
+    aria-label="Scroll to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+    <svg class="share-btn__progress-ring" viewBox="0 0 36 36">
+      <circle class="share-btn__progress-bg" cx="18" cy="18" r="16" />
+      <circle class="share-btn__progress-fill" id="progressRingDesktop" cx="18" cy="18" r="16" />
+    </svg>
+  </button>
+
+  {{!-- Twitter Share --}}
+  <a 
+    href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute="true"}}" 
+    target="_blank" 
+    rel="noopener" 
+    class="share-btn share-btn--social"
+    title="Partager sur Twitter"
+    aria-label="Share on Twitter">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  </a>
+
+  {{!-- Series Navigation Toggle --}}
+  {{#if primary_tag}}
+  <button 
+    class="share-btn share-btn--series js-series-toggle"
+    title="Navigation dans la série"
+    aria-label="Series navigation"
+    data-series-tag="{{primary_tag.slug}}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+  {{/if}}
+</div>
+
+{{!-- Mobile Share Bar (Fixed Bottom) --}}
+<div class="share-bar share-bar--mobile" id="shareBarMobile">
+  {{!-- Twitter Share --}}
+  <a 
+    href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute="true"}}" 
+    target="_blank" 
+    rel="noopener" 
+    class="share-btn share-btn--social"
+    title="Partager sur Twitter"
+    aria-label="Share on Twitter">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  </a>
+
+  {{!-- Series Navigation Toggle --}}
+  {{#if primary_tag}}
+  <button 
+    class="share-btn share-btn--series js-series-toggle"
+    title="Navigation dans la série"
+    aria-label="Series navigation"
+    data-series-tag="{{primary_tag.slug}}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+  {{/if}}
+
+  {{!-- Scroll to Top with Progress Ring --}}
+  <button 
+    class="share-btn share-btn--scroll" 
+    onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+    title="Retour en haut"
+    aria-label="Scroll to top">
+    <svg class="share-btn__progress-ring" viewBox="0 0 44 44">
+      <circle class="share-btn__progress-bg" cx="22" cy="22" r="20" />
+      <circle class="share-btn__progress-fill" id="progressRingMobile" cx="22" cy="22" r="20" />
+    </svg>
+    <svg class="share-btn__arrow-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </button>
+</div>
+
+{{!-- Series Navigation Sidebar (Desktop) --}}
+{{#if primary_tag}}
+<aside class="series-nav series-nav--desktop js-series-nav" id="seriesNavDesktop">
+  <div class="series-nav__overlay js-series-close"></div>
+  <div class="series-nav__panel">
+    <div class="series-nav__header">
+      <h3 class="series-nav__title">Navigation Série</h3>
+      <button class="series-nav__close js-series-close" aria-label="Close navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="series-nav__content">
+      {{> (concat "series-nav/" primary_tag.slug)}}
+    </div>
+  </div>
+</aside>
+
+{{!-- Series Navigation Modal (Mobile) --}}
+<aside class="series-nav series-nav--mobile js-series-nav" id="seriesNavMobile">
+  <div class="series-nav__overlay js-series-close"></div>
+  <div class="series-nav__panel">
+    <div class="series-nav__header">
+      <h3 class="series-nav__title">Navigation Série</h3>
+      <button class="series-nav__close js-series-close" aria-label="Close navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="series-nav__content">
+      {{> (concat "series-nav/" primary_tag.slug)}}
+    </div>
+  </div>
+</aside>
+{{/if}}

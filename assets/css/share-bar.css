@@ -1,0 +1,439 @@
+/* ==========================================================================
+   Share Bar & Series Navigation
+   ========================================================================== */
+
+/* ==========================================================================
+   SHARE BAR - Base Styles
+   ========================================================================== */
+
+.share-bar {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+}
+
+.share-bar.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Desktop - Fixed Right Vertical */
+.share-bar--desktop {
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Mobile - Fixed Bottom Horizontal */
+.share-bar--mobile {
+  display: none;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 107, 0, 0.1);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  justify-content: center;
+  gap: var(--spacing-lg);
+}
+
+/* ==========================================================================
+   SHARE BUTTON - Base Styles
+   ========================================================================== */
+
+.share-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.share-btn svg {
+  flex-shrink: 0;
+}
+
+.share-btn:hover {
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+  box-shadow: var(--glow-orange);
+  transform: scale(1.1);
+}
+
+/* Mobile variant */
+.share-bar--mobile .share-btn {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+}
+
+.share-bar--mobile .share-btn:hover {
+  transform: scale(1);
+}
+
+/* ==========================================================================
+   SHARE BUTTON - Scroll with Progress Ring (DESKTOP)
+   ========================================================================== */
+
+.share-bar--desktop .share-btn--scroll {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-bar--desktop .share-btn--scroll > svg:first-child {
+  position: relative;
+  z-index: 2;
+}
+
+.share-bar--desktop .share-btn__progress-ring {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.share-btn__progress-bg {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 2;
+}
+
+.share-btn__progress-fill {
+  fill: none;
+  stroke: var(--color-orange);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s ease-out;
+  filter: drop-shadow(0 0 3px var(--color-orange-glow));
+}
+
+/* ==========================================================================
+   SHARE BUTTON - Scroll with Progress Ring (MOBILE)
+   ========================================================================== */
+
+.share-bar--mobile .share-btn--scroll {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.share-bar--mobile .share-btn--scroll .share-btn__progress-ring {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.share-bar--mobile .share-btn--scroll .share-btn__arrow-icon {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.share-bar--mobile .share-btn__progress-bg {
+  stroke-width: 2;
+}
+
+.share-bar--mobile .share-btn__progress-fill {
+  stroke-width: 2;
+}
+
+/* ==========================================================================
+   SHARE BUTTON - Series Toggle
+   ========================================================================== */
+
+.share-btn--series.is-active {
+  background: var(--color-orange);
+  color: var(--color-bg-deep);
+  border-color: var(--color-orange);
+  box-shadow: var(--glow-orange-strong);
+}
+
+/* ==========================================================================
+   SERIES NAVIGATION PANEL
+   ========================================================================== */
+
+.series-nav {
+  position: fixed;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.series-nav.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Overlay */
+.series-nav__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Panel Base */
+.series-nav__panel {
+  position: fixed;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Desktop Panel - Slide from Right */
+.series-nav--desktop .series-nav__panel {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 90vw;
+  transform: translateX(100%);
+  transition: transform var(--transition-base);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.series-nav--desktop.is-open .series-nav__panel {
+  transform: translateX(0);
+}
+
+/* Mobile Panel - Full Height */
+.series-nav--mobile {
+  display: none;
+}
+
+.series-nav--mobile .series-nav__panel {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  border: none;
+  border-radius: 0;
+  transform: translateY(100%);
+  transition: transform var(--transition-base);
+}
+
+.series-nav--mobile.is-open .series-nav__panel {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   SERIES NAVIGATION - Header
+   ========================================================================== */
+
+.series-nav__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  background: var(--color-bg-elevated);
+  z-index: 10;
+}
+
+.series-nav--mobile .series-nav__header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-height: 64px;
+}
+
+.series-nav__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-orange);
+  text-shadow: var(--glow-text);
+  margin: 0;
+}
+
+.series-nav--mobile .series-nav__title {
+  font-size: 1rem;
+}
+
+.series-nav__close {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.series-nav__close:hover {
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+  background: var(--color-orange-subtle);
+}
+
+.series-nav--mobile .series-nav__close {
+  width: 44px;
+  height: 44px;
+}
+
+/* ==========================================================================
+   SERIES NAVIGATION - Content
+   ========================================================================== */
+
+.series-nav__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--spacing-lg);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.series-nav--mobile .series-nav__content {
+  padding: var(--spacing-md);
+  padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+}
+
+/* Custom Scrollbar */
+.series-nav__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.series-nav__content::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+.series-nav__content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+.series-nav__content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-orange);
+}
+
+.series-nav--mobile .series-nav__content::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .share-bar--desktop {
+    right: 15px;
+  }
+
+  .share-btn {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .share-bar--desktop .share-btn__progress-ring {
+    width: 44px;
+    height: 44px;
+  }
+
+  .series-nav--desktop .series-nav__panel {
+    width: 360px;
+  }
+}
+
+@media (max-width: 768px) {
+  .share-bar--desktop,
+  .series-nav--desktop {
+    display: none !important;
+  }
+
+  .share-bar--mobile,
+  .series-nav--mobile {
+    display: flex;
+  }
+
+  .post-full {
+    padding-bottom: 80px;
+  }
+
+  body.series-nav-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-bar--mobile {
+    padding: var(--spacing-xs) var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .series-nav__header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .series-nav__content {
+    padding: var(--spacing-sm);
+  }
+
+  .series-nav__title {
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================================================================
+   SAFE AREA INSETS
+   ========================================================================== */
+
+@supports (padding: max(0px)) {
+  .series-nav--mobile .series-nav__header {
+    padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+  }
+
+  .series-nav--mobile .series-nav__content {
+    padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+  }
+
+  .share-bar--mobile {
+    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  }
+}

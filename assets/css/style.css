@@ -21,6 +21,9 @@
 /* Post Content & Typography */
 @import url('content.css');
 
+/* Share Bar & Series Navigation */
+@import url('share-bar.css');
+
 /* Footer */
 @import url('footer.css');
 
@@ -32,3 +35,4 @@
 
 /* Manual navigation snippet */
 @import url('manual-nav.css');
+
