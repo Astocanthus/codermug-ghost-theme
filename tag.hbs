@@ -1,4 +1,6 @@
-{{!< default}} <div class="tag-page">
+{{!< default}}
+
+<div class="tag-page">
   <header class="tag-header">
     <div class="container">
       <span class="tag-label">Série</span>
@@ -6,8 +8,7 @@
       {{#if description}}
       <p class="tag-description">{{description}}</p>
       {{/if}}
-      <span class="tag-count">{{plural ../pagination.total empty="Aucun article" singular="% article" plural="%
-        articles"}}</span>
+      <span class="tag-count">{{plural ../pagination.total empty="Aucun article" singular="% article" plural="% articles"}}</span>
     </div>
   </header>
 
@@ -15,7 +16,7 @@
     <div class="container">
       <div class="articles-grid">
         {{#foreach posts}}
-        <article class="da-card da-card--fixed">
+        <a href="{{url}}" class="da-card da-card--fixed">
           <div class="da-card-corner da-card-corner--tl">
             <svg viewBox="0 0 20 20"><path d="M0 20V0h20" /></svg>
           </div>
@@ -49,7 +50,7 @@
               <span class="da-card-arrow">→</span>
             </div>
           </div>
-        </article>
+        </a>
         {{/foreach}}
       </div>
     </div>
@@ -80,4 +81,4 @@
   </nav>
   {{/if}}
   {{/if}}
-  </div>
+</div>
