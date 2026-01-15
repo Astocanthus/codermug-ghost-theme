@@ -29,7 +29,7 @@
 
                 <div class="home-hero-desc">
                   <p>
-                    A déguster par les <span class="highlight">ingénieurs DevOps & SRE</span>
+                    À déguster par les <span class="highlight">architectes DevOps & ingénieurs SRE</span>
                   </p>
                     <p>
                         <strong>Deep dives techniques</strong>, retours d'expérience et architectures
@@ -234,21 +234,23 @@
 
                 <div class="da-article-list" id="articlesList">
                     {{!-- Use native posts context --}}
-                    {{#foreach posts}}
-                    <a href="{{url}}" class="da-article-row anim-item" data-index="{{@index}}" data-num="{{@number}}">
-                        <span class="da-article-num"></span>
-                        <div class="da-article-info">
-                            <h3 class="da-article-title">{{title}}</h3>
-                            <div class="da-article-meta">
-                                <span class="da-article-cat">
-                                    {{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}
-                                </span>
-                                <span>{{reading_time}} min</span>
-                            </div>
-                        </div>
-                        <span class="da-article-date">{{date format="D MMM YYYY"}}</span>
-                    </a>
-                    {{/foreach}}
+                    {{#get "posts" limit="all"}}
+                      {{#foreach posts}}
+                      <a href="{{url}}" class="da-article-row anim-item" data-index="{{@index}}" data-num="{{@number}}">
+                          <span class="da-article-num"></span>
+                          <div class="da-article-info">
+                              <h3 class="da-article-title">{{title}}</h3>
+                              <div class="da-article-meta">
+                                  <span class="da-article-cat">
+                                      {{#if primary_tag}}{{primary_tag.name}}{{else}}Article{{/if}}
+                                  </span>
+                                  <span>{{reading_time}} min</span>
+                              </div>
+                          </div>
+                          <span class="da-article-date">{{date format="D MMM YYYY"}}</span>
+                      </a>
+                      {{/foreach}}
+                    {{/get}}
                 </div>
             </div>
         </section>
