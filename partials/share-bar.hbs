@@ -1,6 +1,6 @@
 {{!-- 
   Share Bar Component
-  Displays social sharing and series navigation
+  Displays social sharing, TOC navigation and series navigation
   Auto-adapts between desktop (fixed right) and mobile (fixed bottom)
 --}}
 
@@ -21,18 +21,19 @@
     </svg>
   </button>
 
-  {{!-- Twitter Share --}}
-  <a 
-    href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute="true"}}" 
-    target="_blank" 
-    rel="noopener" 
-    class="share-btn share-btn--social"
-    title="Partager sur Twitter"
-    aria-label="Share on Twitter">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  {{!-- TOC Navigation Toggle --}}
+  <button 
+    class="share-btn share-btn--toc js-toc-toggle"
+    title="Table des matières"
+    aria-label="Table of contents">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/>
+      <path d="M5 12h14"/>
+      <path d="M12 5v14"/>
+      <path d="M19 19l-4-4"/>
+      <path d="M5 19l4-4"/>
     </svg>
-  </a>
+  </button>
 
   {{!-- Series Navigation Toggle --}}
   {{#if primary_tag}}
@@ -46,22 +47,49 @@
     </svg>
   </button>
   {{/if}}
-</div>
 
-{{!-- Mobile Share Bar (Fixed Bottom) --}}
-<div class="share-bar share-bar--mobile" id="shareBarMobile">
-  {{!-- Twitter Share --}}
+  {{!-- Twitter/X Share --}}
   <a 
     href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute="true"}}" 
     target="_blank" 
     rel="noopener" 
     class="share-btn share-btn--social"
-    title="Partager sur Twitter"
-    aria-label="Share on Twitter">
+    title="Partager sur X"
+    aria-label="Share on X">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  </a>
+</div>
+
+{{!-- Mobile Share Bar (Fixed Bottom) --}}
+<div class="share-bar share-bar--mobile" id="shareBarMobile">
+  {{!-- Twitter/X Share --}}
+  <a 
+    href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute="true"}}" 
+    target="_blank" 
+    rel="noopener" 
+    class="share-btn share-btn--social"
+    title="Partager sur X"
+    aria-label="Share on X">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   </a>
+
+  {{!-- TOC Navigation Toggle --}}
+  <button 
+    class="share-btn share-btn--toc js-toc-toggle"
+    title="Table des matières"
+    aria-label="Table of contents">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/>
+      <path d="M5 12h14"/>
+      <path d="M12 5v14"/>
+      <path d="M19 19l-4-4"/>
+      <path d="M5 19l4-4"/>
+    </svg>
+  </button>
 
   {{!-- Series Navigation Toggle --}}
   {{#if primary_tag}}
@@ -91,6 +119,44 @@
     </svg>
   </button>
 </div>
+
+{{!-- TOC Navigation Sidebar (Desktop) --}}
+<aside class="toc-nav toc-nav--desktop js-toc-nav" id="tocNavDesktop">
+  <div class="toc-nav__overlay js-toc-close"></div>
+  <div class="toc-nav__panel">
+    <div class="toc-nav__header">
+      <h3 class="toc-nav__title">Sommaire</h3>
+      <button class="toc-nav__close js-toc-close" aria-label="Close navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <nav class="toc-nav__content" id="tocContentDesktop" aria-label="Table of contents">
+      {{!-- Dynamically populated by JS --}}
+    </nav>
+  </div>
+</aside>
+
+{{!-- TOC Navigation Modal (Mobile) --}}
+<aside class="toc-nav toc-nav--mobile js-toc-nav" id="tocNavMobile">
+  <div class="toc-nav__overlay js-toc-close"></div>
+  <div class="toc-nav__panel">
+    <div class="toc-nav__header">
+      <h3 class="toc-nav__title">Sommaire</h3>
+      <button class="toc-nav__close js-toc-close" aria-label="Close navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <nav class="toc-nav__content" id="tocContentMobile" aria-label="Table of contents">
+      {{!-- Dynamically populated by JS --}}
+    </nav>
+  </div>
+</aside>
 
 {{!-- Series Navigation Sidebar (Desktop) --}}
 {{#if primary_tag}}
