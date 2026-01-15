@@ -97,7 +97,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     const href = this.getAttribute('href');
     if (href !== '#' && href.length > 1) {
-      const target = document.querySelector(href);
+      const id = decodeURIComponent(href.slice(1));
+      const target = document.getElementById(id);
       if (target) {
         e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth' });

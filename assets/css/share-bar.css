@@ -443,7 +443,6 @@
   line-height: 1.4;
   color: var(--color-text-secondary);
   transition: all var(--transition-fast);
-  border-radius: 4px;
 }
 
 .toc-link:hover {
@@ -460,8 +459,9 @@
 }
 
 .toc-item--h3 .toc-link.is-active {
-  border-left: 2px solid var(--color-orange);
-  margin-left: -1px;
+  border-left: 1px solid var(--color-orange);
+  margin-left: -25px;
+  padding-left: 39px;
 }
 
 /* TOC Icon */
