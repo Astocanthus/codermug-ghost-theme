@@ -186,17 +186,9 @@
 .series-nav {
   position: fixed;
   z-index: 10000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--transition-base), visibility var(--transition-base);
 }
 
-.series-nav.is-open {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Overlay */
+/* Overlay - Separate opacity transition */
 .series-nav__overlay {
   position: fixed;
   inset: 0;
@@ -204,6 +196,14 @@
   cursor: pointer;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.series-nav.is-open .series-nav__overlay {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Panel Base */
@@ -359,11 +359,9 @@
    SHARE BAR VISIBILITY WITH MODAL OPEN
    ========================================================================== */
 
-/* Scroll lock for both desktop and mobile */
+/* Desktop: simple overflow hidden (stays in place) */
 body.series-nav-open {
   overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
 }
 
 /* Keep mobile share bar visible (but behind modal) when series nav is open */

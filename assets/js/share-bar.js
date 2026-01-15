@@ -69,24 +69,54 @@
     });
   }
 
-  // Prevent body scroll
-  function disableBodyScroll() {
-    scrollPosition = window.scrollY;
-    document.body.classList.add('series-nav-open');
-    document.body.style.top = `-${scrollPosition}px`;
+  // Check if mobile
+  function isMobile() {
+    return window.innerWidth <= 768;
   }
 
-  // Enable body scroll
+  // Prevent body scroll - lock in place
+  function disableBodyScroll() {
+    scrollPosition = window.scrollY;
+    
+    // Add class to both html and body
+    document.documentElement.classList.add('series-nav-open');
+    document.body.classList.add('series-nav-open');
+    
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+  }
+
+  // Enable body scroll - restore position INSTANTLY without animation
   function enableBodyScroll() {
+    // Remove class from both html and body
+    document.documentElement.classList.remove('series-nav-open');
     document.body.classList.remove('series-nav-open');
+    
+    // Disable smooth scrolling temporarily
+    const htmlStyle = document.documentElement.style.scrollBehavior;
+    const bodyStyle = document.body.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
+    
+    document.body.style.position = '';
     document.body.style.top = '';
-    window.scrollTo(0, scrollPosition);
+    document.body.style.width = '';
+    
+    // Restore scroll position INSTANTLY (no animation)
+    document.documentElement.scrollTop = scrollPosition;
+    document.body.scrollTop = scrollPosition;
+    
+    // Restore smooth scrolling after a frame
+    requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = htmlStyle;
+      document.body.style.scrollBehavior = bodyStyle;
+    });
   }
 
   // Toggle series navigation
   function toggleSeriesNav() {
-    const isMobile = window.innerWidth <= 768;
-    const nav = isMobile ? seriesNavMobile : seriesNavDesktop;
+    const nav = isMobile() ? seriesNavMobile : seriesNavDesktop;
     const toggleBtns = document.querySelectorAll('.js-series-toggle');
     
     if (!nav) return;
@@ -99,12 +129,10 @@
     // Toggle button active state
     toggleBtns.forEach(btn => btn.classList.toggle('is-active', !isOpen));
     
-    // Handle body scroll - Apply for both desktop and mobile
+    // Handle body scroll
     if (isOpen) {
-      // Closing
       enableBodyScroll();
     } else {
-      // Opening
       disableBodyScroll();
     }
   }
@@ -119,7 +147,6 @@
       btn.classList.remove('is-active');
     });
     
-    // Restore scroll
     enableBodyScroll();
   }
 

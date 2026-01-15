@@ -16,12 +16,22 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-y: scroll;
-  scrollbar-gutter: stable;
+  overflow-y: scroll !important;
+  scrollbar-gutter: stable !important;
+}
+
+/* Prevent layout shift when Ghost Portal/Search modals open */
+html.gh-portal-open,
+html.sodo-search-open,
+body.gh-portal-open,
+body.sodo-search-open {
+  overflow-y: scroll !important;
+  scrollbar-gutter: stable !important;
 }
 
 body {
   margin: 0;
+  margin-right: 0 !important;
   padding: 0;
   font-family: var(--font-sans);
   font-size: 1rem;
