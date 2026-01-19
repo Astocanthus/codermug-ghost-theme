@@ -1,0 +1,243 @@
+{{!-- 
+  K8S Deep Dive Series Navigation
+  Custom navigation for Kubernetes series articles
+--}}
+
+<div class="series-nav-intro">
+  <p class="series-nav-intro__text">
+    Série complète sur les internals de Kubernetes. 
+    Chaque article approfondit un composant clé du control plane.
+  </p>
+</div>
+
+{{!-- Use Ghost get helper to fetch all posts from this tag --}}
+{{#get "posts" filter="tag:k8s-deep-dive" limit="all"}}
+  {{#if posts}}
+    <nav class="series-nav-list">
+      {{#foreach posts}}
+        <a 
+          href="{{url}}" 
+          class="series-nav-item {{#is "post"}}{{#if (eq @root.post.id id)}}is-current{{/if}}{{/is}}">
+          
+          <span class="series-nav-item__number">{{@number}}</span>
+          
+          <div class="series-nav-item__content">
+            <h4 class="series-nav-item__title">{{title}}</h4>
+            <div class="series-nav-item__meta">
+              <span class="series-nav-item__date">{{date format="D MMM YYYY"}}</span>
+              <span class="series-nav-item__reading">{{reading_time}} min</span>
+            </div>
+          </div>
+          
+          <svg class="series-nav-item__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      {{/foreach}}
+    </nav>
+  {{else}}
+    <p class="series-nav-empty">Aucun article trouvé dans cette série.</p>
+  {{/if}}
+{{/get}}
+
+{{!-- Series Info Footer --}}
+<div class="series-nav-footer">
+  <a href="/tag/k8s-deep-dive/" class="series-nav-footer__link">
+    Voir tous les articles de la série
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+  </a>
+</div>
+
+<style>
+/* Series Nav Intro */
+.series-nav-intro {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-orange-subtle);
+  border-left: 3px solid var(--color-orange);
+  border-radius: var(--radius-sm);
+}
+
+.series-nav-intro__text {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Series Nav List */
+.series-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Series Nav Item */
+.series-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  position: relative;
+  min-height: 52px;
+}
+
+.series-nav-item:hover {
+  background: var(--color-bg-card-hover);
+  border-color: var(--color-orange);
+  transform: translateX(3px);
+}
+
+.series-nav-item:active {
+  transform: translateX(1px);
+}
+
+.series-nav-item.is-current {
+  background: var(--color-orange-subtle);
+  border-color: var(--color-orange);
+}
+
+.series-nav-item.is-current::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-orange);
+  box-shadow: 0 0 8px var(--color-orange-glow);
+}
+
+/* Item Number */
+.series-nav-item__number {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dim);
+  min-width: 32px;
+  text-align: center;
+  transition: color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.series-nav-item:hover .series-nav-item__number,
+.series-nav-item.is-current .series-nav-item__number {
+  color: var(--color-orange);
+  text-shadow: var(--glow-text);
+}
+
+/* Item Content */
+.series-nav-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.series-nav-item__title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+  transition: color var(--transition-fast);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.series-nav-item:hover .series-nav-item__title {
+  color: var(--color-orange);
+}
+
+.series-nav-item__meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-dim);
+}
+
+/* Item Icon */
+.series-nav-item__icon {
+  color: var(--color-text-dim);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.series-nav-item:hover .series-nav-item__icon {
+  color: var(--color-orange);
+  transform: translateX(3px);
+}
+
+/* Empty State */
+.series-nav-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--spacing-xl);
+  margin: 0;
+}
+
+/* Series Nav Footer */
+.series-nav-footer {
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  margin-top: auto;
+}
+
+.series-nav-footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-orange);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  padding: var(--spacing-sm);
+}
+
+.series-nav-footer__link:hover {
+  text-shadow: var(--glow-text);
+}
+
+.series-nav-footer__link svg {
+  transition: transform var(--transition-fast);
+}
+
+.series-nav-footer__link:hover svg {
+  transform: translateX(3px);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .series-nav-intro__text {
+    font-size: 0.8rem;
+  }
+
+  .series-nav-item {
+    padding: var(--spacing-sm) var(--spacing-xs);
+  }
+
+  .series-nav-item__title {
+    font-size: 0.8rem;
+  }
+
+  .series-nav-item__meta {
+    font-size: 0.6rem;
+  }
+
+  .series-nav-footer__link {
+    font-size: 0.75rem;
+  }
+}
+</style>
