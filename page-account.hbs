@@ -156,7 +156,7 @@ html, body {
                     Déconnexion ou suppression de votre compte.
                 </p>
                 <div class="account-actions account-actions--danger">
-                    <a href="#/portal/signout" class="account-btn account-btn--danger" data-portal="signout">
+                    <a href="/auth/member/logout" class="account-btn account-btn--danger">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16 17 21 12 16 7"/>
@@ -178,7 +178,7 @@ html, body {
             <h1 class="logged-out-title">Accès restreint</h1>
             <p class="logged-out-message">Vous devez être connecté pour accéder à cette page.</p>
             <div class="logged-out-actions">
-                <a href="#/portal/signin" class="account-btn account-btn--primary" data-portal="signin">
+                <a href="/auth/member/login?action=signin" class="account-btn account-btn--primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
                         <polyline points="10 17 15 12 10 7"/>
