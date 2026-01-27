@@ -624,7 +624,7 @@
 }
 
 /* ==========================================================================
-   ARTICLE TABLE - Archive Style List (v4)
+   ARTICLE TABLE - Archive Style List
    Usage: 
    <div class="da-article-list">
        <a href="#" class="da-article-row">
@@ -866,4 +866,58 @@
 
 .da-glow-pulse {
     animation: da-glow 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   SOCIAL LINKS - Angular style buttons
+   Usage: 
+   <div class="da-social-links">
+       <a href="#" class="da-social-link" title="Twitter">
+           <svg>...</svg>
+       </a>
+   </div>
+   ========================================================================== */
+
+.da-social-links {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.da-social-link {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    clip-path: polygon(
+        6px 0, 100% 0, 
+        100% calc(100% - 6px), calc(100% - 6px) 100%, 
+        0 100%, 0 6px
+    );
+}
+
+.da-social-link:hover {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+    box-shadow: var(--glow-orange);
+}
+
+.da-social-link svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ==========================================================================
+   BUTTON SIZE VARIANT - Small
+   Usage: <button class="da-btn da-btn--primary da-btn--sm">OK</button>
+   ========================================================================== */
+
+.da-btn--sm {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.75rem;
 }
