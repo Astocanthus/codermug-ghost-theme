@@ -6,7 +6,7 @@
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 1000;
+  z-index: 1001; /* Above home-nav-dots (1000) */
   background: rgba(10, 10, 15, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -100,7 +100,7 @@
 }
 
 .nav-item {
-  position: relative;
+  position: static; /* Changed for full-width dropdown */
 }
 
 .nav-link {
@@ -136,94 +136,283 @@
 }
 
 /* ==========================================================================
-   Dropdown Menu - Stories
+   Dropdown Menu - Full Width Mega Menu (Hover to Open)
    ========================================================================== */
 
+/* Dropdown trigger area - includes gap to dropdown */
+.nav-item.has-dropdown {
+  position: relative;
+}
+
+/* Invisible bridge to connect nav-link to dropdown */
+.nav-item.has-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 20px; /* Bridge gap */
+  background: transparent;
+}
+
+/* Keep hover state when dropdown is visible */
+.nav-item.has-dropdown:hover .nav-link {
+  color: var(--color-orange);
+  background: var(--color-orange-subtle);
+}
+
+/* Chevron rotation on hover */
 .nav-item.has-dropdown:hover .nav-link svg {
   transform: rotate(180deg);
 }
 
+/* Full-width dropdown container */
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  min-width: 500px;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md);
+  position: fixed;
+  top: 86px; /* Align exactly with header bottom */
+  left: 0;
+  right: 0;
+  width: 100vw;
+  background: var(--color-bg);
+  border-top: 2px solid var(--color-orange);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-lg) 0;
   opacity: 0;
   visibility: hidden;
-  transition: all var(--transition-base);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  z-index: 100;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  box-shadow: 
+    0 25px 60px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(255, 107, 0, 0.08);
+  z-index: 1002; /* Above header */
 }
 
+/* Show dropdown on hover */
 .nav-item.has-dropdown:hover .dropdown-menu {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+}
+
+/* Centered content container */
+.dropdown-inner {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
 }
 
 .dropdown-title {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   color: var(--color-text-dim);
-  margin-bottom: var(--spacing-sm);
-  padding: 0 var(--spacing-xs);
+  margin: 0;
+  padding: 0;
 }
 
+.dropdown-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-orange);
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-view-all:hover {
+  gap: 0.75rem;
+  color: var(--color-orange-light);
+}
+
+.dropdown-view-all svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-view-all:hover svg {
+  transform: translateX(2px);
+}
+
+/* Dropdown Grid - 4 columns, wider cards */
 .dropdown-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-sm);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
 }
 
-/* Cards dans le dropdown */
+/* ==========================================================================
+   Dropdown Cards - Enhanced Style
+   ========================================================================== */
+
 .dropdown-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-md);
-  transition: all var(--transition-base);
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
   text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-base);
+  overflow: hidden;
+  min-height: 220px;
+}
+
+/* Top bar animation on hover */
+.dropdown-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-orange);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.dropdown-card:hover::before {
+  transform: scaleX(1);
 }
 
 .dropdown-card:hover {
-  background: var(--color-bg-card-hover);
+  background: var(--color-bg-elevated);
   border-color: var(--color-border-hover);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--glow-orange);
 }
 
 .dropdown-card-icon {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-orange-subtle);
-  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border);
   margin-bottom: var(--spacing-sm);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.dropdown-card:hover .dropdown-card-icon {
+  border-color: var(--color-border-hover);
+  background: var(--color-orange-soft);
 }
 
 .dropdown-card-title {
-  font-size: 0.95rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: var(--spacing-xs);
+  transition: color 0.2s ease;
+}
+
+.dropdown-card:hover .dropdown-card-title {
+  color: var(--color-orange);
 }
 
 .dropdown-card-desc {
   font-size: 0.8rem;
   color: var(--color-text-muted);
-  line-height: 1.4;
+  line-height: 1.5;
+  flex: 1;
+}
+
+/* Card Footer with meta info */
+.dropdown-card-footer {
+  margin-top: auto;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.dropdown-card-count {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-orange);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dropdown-card-count::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: var(--color-orange);
+  border-radius: 50%;
+}
+
+.dropdown-card-updated {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-dim);
+}
+
+/* ==========================================================================
+   Dropdown Card - Coming Soon Variant
+   ========================================================================== */
+
+.dropdown-card--soon {
+  border-style: dashed;
+  opacity: 0.6;
+  cursor: default;
+}
+
+.dropdown-card--soon:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+.dropdown-card--soon::before {
+  display: none;
+}
+
+.dropdown-card--soon .dropdown-card-icon {
+  border-style: dashed;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 300;
+  color: var(--color-orange);
+  opacity: 0.6;
+}
+
+.dropdown-card--soon .dropdown-card-title {
+  color: var(--color-text-muted);
+}
+
+.dropdown-card--soon:hover .dropdown-card-title {
+  color: var(--color-text);
+}
+
+.dropdown-card--soon .dropdown-card-footer {
+  border-top-style: dashed;
+}
+
+.dropdown-card--soon .dropdown-card-count {
+  color: var(--color-text-dim);
+}
+
+.dropdown-card--soon .dropdown-card-count::before {
+  background: var(--color-text-dim);
 }
 
 /* ==========================================================================
@@ -278,28 +467,6 @@
 .btn-ghost.active {
   color: var(--color-orange);
   background: var(--color-orange-subtle);
-}
-
-.btn-primary {
-  background: var(--color-orange);
-  color: var(--color-bg);
-  padding: 0.5rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: var(--border-radius-sm);
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--glow-orange);
-  min-width: 100px;
-  text-align: center;
-}
-
-.btn-primary:hover {
-  background: var(--color-orange-light);
-  color: var(--color-bg);
-  transform: translateY(-2px);
-  box-shadow: var(--glow-orange-strong);
 }
 
 /* ==========================================================================
@@ -450,11 +617,48 @@
   color: var(--color-text-muted);
 }
 
+/* ==========================================================================
+   Mobile Nav Actions - Side by Side Buttons
+   ========================================================================== */
+
 .mobile-nav-actions {
   margin-top: var(--spacing-xl);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+
+/* Auth buttons row - side by side */
+.mobile-nav-auth {
+  display: flex;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.mobile-nav-auth .btn-ghost {
+  flex: 1;
+  padding: var(--spacing-md);
+  text-align: center;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  /* Match da-btn clip-path */
+  clip-path: polygon(
+    0 8px, 8px 0,
+    calc(100% - 8px) 0, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 0 calc(100% - 8px)
+  );
+}
+
+.mobile-nav-auth .btn-ghost:hover {
+  border-color: var(--color-orange);
+  background: var(--color-orange-subtle);
+}
+
+.mobile-nav-auth .da-btn {
+  flex: 1;
+  width: auto;
+  max-width: none;
 }
 
 /* Mobile Search Button */
@@ -479,7 +683,29 @@
   border-color: var(--color-orange);
 }
 
-.mobile-nav-actions .btn-primary {
+/* Full width da-btn for logged in state */
+.mobile-nav-actions > .da-btn {
+  width: 100%;
+  max-width: none;
   text-align: center;
   padding: var(--spacing-md);
+}
+
+/* ==========================================================================
+   Responsive - Hide slogan below 1200px
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .site-slogan {
+    display: none;
+  }
+  
+  .site-branding {
+    min-width: auto;
+  }
+  
+  /* Adjust dropdown grid for smaller screens */
+  .dropdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

@@ -57,30 +57,100 @@
             <a href="{{@site.url}}/toolbox/" class="nav-link">Boîte à outils</a>
           </li>
           <li class="nav-item has-dropdown">
-            <a href="#" class="nav-link">
+            <a href="{{@site.url}}/series/" class="nav-link">
               Séries
               <svg class="nav-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </a>
+            <!-- Full Width Mega Menu Dropdown (Hover) -->
             <div class="dropdown-menu">
-              <div class="dropdown-title">Nos séries d'articles</div>
-              <div class="dropdown-grid">
-                <a href="{{@site.url}}/tag/k8s-deep-dive/" class="dropdown-card">
-                  <div class="dropdown-card-icon">☸️</div>
-                  <div class="dropdown-card-title">K8S Deep Dive</div>
-                  <div class="dropdown-card-desc">Plongée en profondeur dans Kubernetes</div>
-                </a>
-                <a href="{{@site.url}}/tag/itil/" class="dropdown-card">
-                  <div class="dropdown-card-icon">📋</div>
-                  <div class="dropdown-card-title">ITIL</div>
-                  <div class="dropdown-card-desc">Bonnes pratiques IT Service Management</div>
-                </a>
-                <a href="{{@site.url}}/note-de-version/" class="dropdown-card">
-                  <div class="dropdown-card-icon">📝</div>
-                  <div class="dropdown-card-title">Notes de version</div>
-                  <div class="dropdown-card-desc">Changelog et mises à jour</div>
-                </a>
+              <div class="dropdown-inner">
+                <div class="dropdown-header">
+                  <span class="dropdown-title">Nos séries d'articles</span>
+                  <a href="{{@site.url}}/series/" class="dropdown-view-all">
+                    Voir tout
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </a>
+                </div>
+                <div class="dropdown-grid">
+                  
+                  {{!-- Kubernetes en profondeur (Display name) - Tag: k8s-deep-dive --}}
+                  {{#get "posts" filter="tag:k8s-deep-dive" limit="all" as |allPosts|}}
+                  {{#get "posts" filter="tag:k8s-deep-dive" limit="1" order="published_at desc" as |latestPost|}}
+                  <a href="{{@site.url}}/tag/k8s-deep-dive/" class="dropdown-card">
+                    <div class="dropdown-card-icon">☸️</div>
+                    <div class="dropdown-card-title">Kubernetes en profondeur</div>
+                    <div class="dropdown-card-desc">Plongée en profondeur dans Kubernetes, de l'API server aux CRDs.</div>
+                    <div class="dropdown-card-footer">
+                      <span class="dropdown-card-count">{{allPosts.length}} article{{#if (match allPosts.length ">" 1)}}s{{/if}}</span>
+                      {{#foreach latestPost}}
+                      <span class="dropdown-card-updated">Màj {{date published_at format="DD MMM"}}</span>
+                      {{/foreach}}
+                    </div>
+                  </a>
+                  {{/get}}
+                  {{/get}}
+                  
+                  {{!-- ITIL (Display name) - Tag: itil --}}
+                  {{#get "posts" filter="tag:itil" limit="all" as |allPosts|}}
+                  {{#get "posts" filter="tag:itil" limit="1" order="published_at desc" as |latestPost|}}
+                  <a href="{{@site.url}}/tag/itil/" class="dropdown-card">
+                    <div class="dropdown-card-icon">📋</div>
+                    <div class="dropdown-card-title">ITIL</div>
+                    <div class="dropdown-card-desc">Bonnes pratiques IT Service Management pour les équipes DevOps.</div>
+                    <div class="dropdown-card-footer">
+                      <span class="dropdown-card-count">{{allPosts.length}} article{{#if (match allPosts.length ">" 1)}}s{{/if}}</span>
+                      {{#foreach latestPost}}
+                      <span class="dropdown-card-updated">Màj {{date published_at format="DD MMM"}}</span>
+                      {{/foreach}}
+                    </div>
+                  </a>
+                  {{/get}}
+                  {{/get}}
+                  
+                  {{!-- Notes de version (Display name) - Tag: note-de-version --}}
+                  {{#get "posts" filter="tag:note-de-version" limit="all" as |allPosts|}}
+                  {{#get "posts" filter="tag:note-de-version" limit="1" order="published_at desc" as |latestPost|}}
+                  <a href="{{@site.url}}/note-de-version/" class="dropdown-card">
+                    <div class="dropdown-card-icon">📝</div>
+                    <div class="dropdown-card-title">Notes de version</div>
+                    <div class="dropdown-card-desc">Changelog complet et historique des mises à jour du site.</div>
+                    <div class="dropdown-card-footer">
+                      <span class="dropdown-card-count">{{allPosts.length}} article{{#if (match allPosts.length ">" 1)}}s{{/if}}</span>
+                      {{#foreach latestPost}}
+                      <span class="dropdown-card-updated">Màj {{date published_at format="DD MMM"}}</span>
+                      {{/foreach}}
+                    </div>
+                  </a>
+                  {{/get}}
+                  {{/get}}
+                  
+                  {{!-- Coming Soon - Ansible pour les teubé --}}
+                  <div class="dropdown-card dropdown-card--soon">
+                    <div class="dropdown-card-icon">+</div>
+                    <div class="dropdown-card-title">Ansible pour les teubé</div>
+                    <div class="dropdown-card-desc">L'automatisation expliquée sans prise de tête.</div>
+                    <div class="dropdown-card-footer">
+                      <span class="dropdown-card-count">Prochainement</span>
+                      <span class="dropdown-card-updated">—</span>
+                    </div>
+                  </div>
+                  
+                  {{!-- Coming Soon - OpenStack au scalpel --}}
+                  <div class="dropdown-card dropdown-card--soon">
+                    <div class="dropdown-card-icon">+</div>
+                    <div class="dropdown-card-title">OpenStack au scalpel</div>
+                    <div class="dropdown-card-desc">Dissection complète de la plateforme cloud open source.</div>
+                    <div class="dropdown-card-footer">
+                      <span class="dropdown-card-count">Prochainement</span>
+                      <span class="dropdown-card-updated">—</span>
+                    </div>
+                  </div>
+                  
+                </div>
               </div>
             </div>
           </li>
@@ -100,10 +170,10 @@
         </button>
 
         {{#if @member}}
-        <a href="/account" class="btn-ghost {{link_class for="/account/" activeClass="active"}}"">Mon compte</a>
+        <a href="/account" class="btn-ghost {{link_class for="/account/" activeClass="active"}}">Mon compte</a>
         {{else}}
         <a href="/auth/member/login?action=signin" class="btn-ghost">Se connecter</a>
-        <a href="/auth/member/login?action=signup" class="btn-primary">S'abonner</a>
+        <a href="/auth/member/login?action=signup" class="da-btn da-btn--primary da-btn--sm">S'abonner</a>
         {{/if}}
 
         <!-- Mobile Menu Button -->
@@ -170,10 +240,13 @@
         <span>Rechercher</span>
       </button>
       {{#if @member}}
-      <a href="/account" class="btn-primary">Mon compte</a>
+      <a href="/account" class="da-btn da-btn--primary">Mon compte</a>
       {{else}}
-      <a href="/auth/member/login?action=signin" class="btn-ghost">Log in</a>
-      <a href="/auth/member/login?action=signup" class="btn-primary">S'abonner</a>
+      <!-- Auth buttons side by side -->
+      <div class="mobile-nav-auth">
+        <a href="/auth/member/login?action=signin" class="btn-ghost">Se connecter</a>
+        <a href="/auth/member/login?action=signup" class="da-btn da-btn--primary">S'abonner</a>
+      </div>
       {{/if}}
     </div>
   </nav>
