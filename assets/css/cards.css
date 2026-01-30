@@ -406,11 +406,6 @@ body {
   z-index: 0;
 }
 
-.pagination {
-  margin-top: var(--spacing-xl);
-  padding: var(--spacing-lg) 0;
-}
-
 .pagination .container,
 .pagination>div {
   display: flex;
