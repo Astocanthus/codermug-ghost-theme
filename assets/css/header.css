@@ -449,6 +449,29 @@
   flex-shrink: 0;
 }
 
+/* Donate Button (Tipeee) */
+.btn-donate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-donate:hover {
+  color: #ff6b6b;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
+
+.btn-donate svg {
+  flex-shrink: 0;
+}
+
 .btn-ghost {
   color: var(--color-text-muted);
   padding: 0.5rem 1rem;
